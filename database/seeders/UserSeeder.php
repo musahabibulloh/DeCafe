@@ -56,5 +56,20 @@ class UserSeeder extends Seeder
                 ]
             );
         }
+
+        // Seed production admin from environment variables if set (Railway)
+        $prodAdminEmail = env('ADMIN_EMAIL');
+        $prodAdminPassword = env('ADMIN_PASSWORD');
+
+        if ($prodAdminEmail && $prodAdminPassword) {
+            User::updateOrCreate(
+                ['email' => $prodAdminEmail],
+                [
+                    'name' => 'Admin DeCafe',
+                    'role' => 'admin',
+                    'password' => Hash::make($prodAdminPassword),
+                ]
+            );
+        }
     }
 }
