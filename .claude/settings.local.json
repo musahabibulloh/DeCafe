@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mysql -u root decafe -e \"SELECT id, role FROM users;\")",
+      "Bash(mysql -u root -p decafe -e \"SELECT id, role FROM users;\")"
+    ]
+  }
+}

@@ -1,0 +1,111 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Detail Pesanan</h2>
+        <a href="{{ route('kasir.orders.index') }}" class="btn btn-outline-secondary">Kembali</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <p><strong>Kode Pesanan:</strong> {{ $order->kode_pesanan }}</p>
+            <p><strong>Nomor Meja:</strong> {{ $order->nomor_meja }}</p>
+            <p><strong>Nama Pelanggan:</strong> {{ $order->nama_pelanggan ?? '-' }}</p>
+            <p><strong>Status Pembayaran:</strong> 
+                <span class="badge bg-{{ $order->status_pembayaran === 'lunas' ? 'success' : ($order->status_pembayaran === 'menunggu_konfirmasi' ? 'info text-dark' : 'warning') }}">
+                    {{ ucwords(str_replace('_', ' ', $order->status_pembayaran)) }}
+                </span>
+            </p>
+
+            @if ($order->bukti_pembayaran)
+                <div class="mt-4 pt-3 border-top">
+                    <h6 class="fw-bold mb-2"><i class="bi bi-receipt"></i> Bukti Pembayaran QRIS:</h6>
+                    <div style="max-width: 300px;">
+                        <a href="{{ asset($order->bukti_pembayaran) }}" target="_blank" class="d-block border rounded p-2 text-center bg-light text-decoration-none">
+                            <img src="{{ asset($order->bukti_pembayaran) }}" class="img-fluid rounded" style="max-height: 200px;" alt="Bukti Pembayaran">
+                            <span class="d-block small text-muted mt-2"><i class="bi bi-zoom-in"></i> Klik untuk memperbesar</span>
+                        </a>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="mb-3">Item Pesanan</h5>
+            <!-- Desktop View -->
+            <div class="d-none d-md-block table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Menu</th>
+                            <th>Harga</th>
+                            <th>Jumlah</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($order->items as $item)
+                            <tr>
+                                <td>
+                                    {{ $item->nama_menu }}
+                                    @if($item->catatan_item)
+                                        <div class="small text-muted font-monospace mt-1" style="font-size: 0.8rem; white-space: pre-line;">
+                                            <i class="bi bi-gear-wide-connected"></i> {!! e($item->catatan_item) !!}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td>Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                <td>{{ $item->jumlah }}</td>
+                                <td>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Total</th>
+                            <th>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Mobile View -->
+            <div class="d-md-none list-group list-group-flush">
+                @foreach ($order->items as $item)
+                    <div class="list-group-item px-0 py-2 border-0 border-bottom" style="background: transparent;">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="fw-semibold" style="color: var(--bs-body-color);">
+                                {{ $item->nama_menu }}
+                                @if($item->catatan_item)
+                                    <div class="small text-muted font-monospace mt-1" style="font-size: 0.75rem; white-space: pre-line; font-weight: normal;">
+                                        <i class="bi bi-gear-wide-connected"></i> {!! e($item->catatan_item) !!}
+                                    </div>
+                                @endif
+                            </span>
+                            <span class="fw-bold text-primary">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center text-muted small">
+                            <span>Rp {{ number_format($item->harga, 0, ',', '.') }}</span>
+                            <span>Jumlah: <strong>{{ $item->jumlah }}x</strong></span>
+                        </div>
+                    </div>
+                @endforeach
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-2">
+                    <span class="fw-bold" style="color: var(--bs-body-color);">Total:</span>
+                    <h5 class="fw-bold text-success mb-0">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        @if ($order->status_pembayaran !== 'lunas' && $order->status_pesanan !== 'dibatalkan')
+            <a href="{{ route('kasir.payments.create', $order) }}" class="btn btn-success">Konfirmasi Pembayaran</a>
+        @endif
+        @if ($order->payment)
+            <a href="{{ route('kasir.payments.receipt', $order->payment) }}" class="btn btn-outline-primary">Lihat Struk</a>
+        @endif
+    </div>
+@endsection
