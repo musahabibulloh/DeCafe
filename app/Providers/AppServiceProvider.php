@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('app.env') !== 'local') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         RateLimiter::for('login', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
