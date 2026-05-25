@@ -78,15 +78,15 @@
                     <div class="d-flex flex-column gap-2 mb-3">
                         <div class="d-flex justify-content-between">
                             <span class="text-muted">Total Tagihan:</span>
-                            <strong class="text-white">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</strong>
+                            <strong>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</strong>
                         </div>
                         <div class="d-flex justify-content-between">
                             <span class="text-muted">Metode Pembayaran:</span>
-                            <strong class="text-white" id="confirmMetode"></strong>
+                            <strong id="confirmMetode"></strong>
                         </div>
                         <div class="d-flex justify-content-between" id="confirmUangDiterimaRow">
                             <span class="text-muted">Uang Diterima:</span>
-                            <strong class="text-white" id="confirmUangDiterima"></strong>
+                            <strong id="confirmUangDiterima"></strong>
                         </div>
                         <div class="d-flex justify-content-between border-top pt-2" id="confirmKembalianRow" style="border-color: var(--border-color) !important;">
                             <span class="fw-bold">Kembalian:</span>

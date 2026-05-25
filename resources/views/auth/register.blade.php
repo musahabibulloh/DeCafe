@@ -11,12 +11,12 @@
 
         :root {
             --bg-dark: #08080a;
-            --bg-card: rgba(19, 18, 26, 0.75);
+            --bg-card: rgba(16, 15, 22, 0.9);
             --primary-gradient: linear-gradient(135deg, #e09e39 0%, #b27318 100%);
             --primary-color: #e09e39;
             --text-main: #f5f0e6;
-            --text-muted: #9c97a6;
-            --border-color: rgba(255, 255, 255, 0.06);
+            --text-muted: #c0b8ca;
+            --border-color: rgba(255, 255, 255, 0.18);
         }
 
         body {
@@ -48,7 +48,7 @@
         }
 
         .form-control {
-            background-color: rgba(255, 255, 255, 0.04) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
             border: 1px solid var(--border-color) !important;
             color: #fff !important;
             border-radius: 10px !important;
@@ -57,7 +57,7 @@
         }
 
         .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.08) !important;
+            background-color: rgba(255, 255, 255, 0.14) !important;
             border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 3px rgba(224, 158, 57, 0.25) !important;
             color: #fff !important;
@@ -165,7 +165,7 @@
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group mb-1">
                         <input type="password" name="password" id="password" class="form-control" required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border: 1px solid var(--border-color); border-left: none; background-color: rgba(255, 255, 255, 0.04); color: var(--text-muted); border-radius: 0 10px 10px 0 !important; padding: 0.7rem 1.1rem; transition: all 0.2s ease;">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border: 1px solid var(--border-color); border-left: none; background-color: rgba(255, 255, 255, 0.1); color: var(--text-muted); border-radius: 0 10px 10px 0 !important; padding: 0.7rem 1.1rem; transition: all 0.2s ease;">
                             <i class="bi bi-eye-slash" id="toggleIcon"></i>
                         </button>
                     </div>
@@ -175,7 +175,7 @@
                     <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
                     <div class="input-group">
                         <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirmation" style="border: 1px solid var(--border-color); border-left: none; background-color: rgba(255, 255, 255, 0.04); color: var(--text-muted); border-radius: 0 10px 10px 0 !important; padding: 0.7rem 1.1rem; transition: all 0.2s ease;">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirmation" style="border: 1px solid var(--border-color); border-left: none; background-color: rgba(255, 255, 255, 0.1); color: var(--text-muted); border-radius: 0 10px 10px 0 !important; padding: 0.7rem 1.1rem; transition: all 0.2s ease;">
                             <i class="bi bi-eye-slash" id="toggleConfirmationIcon"></i>
                         </button>
                     </div>

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container d-flex flex-column align-items-center justify-content-center py-5">
-    <div class="card border-0 shadow-lg p-4 text-center text-white" style="max-width: 480px; width: 100%; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-color) !important;">
+    <div class="card border-0 shadow-lg p-4 text-center" style="max-width: 480px; width: 100%; border-radius: 20px; border: 1px solid var(--border-color) !important;">
         
         <!-- Header -->
         <div class="mb-3">
@@ -13,7 +13,7 @@
         </div>
 
         <!-- Info Order -->
-        <div class="p-3 mb-4 rounded-3 text-start" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="p-3 mb-4 rounded-3 text-start" style="background: var(--list-item-bg); border: 1px solid var(--border-color);">
             <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted">Kode Pesanan</span>
                 <span class="fw-semibold">{{ $order->kode_pesanan }}</span>
@@ -22,7 +22,7 @@
                 <span class="text-muted">Nomor Meja</span>
                 <span class="fw-semibold">Meja {{ $order->nomor_meja }}</span>
             </div>
-            <hr class="my-2" style="border-color: rgba(255, 255, 255, 0.1);">
+            <hr class="my-2" style="border-color: var(--border-color); opacity: 1;">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-muted fw-bold">Total Tagihan</span>
                 <span class="fs-4 fw-bold text-success">Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
@@ -42,8 +42,8 @@
         <form action="{{ route('customer.orders.qris.upload', $order) }}" method="POST" enctype="multipart/form-data" class="text-start mt-3">
             @csrf
             <div class="mb-3">
-                <label for="bukti_pembayaran" class="form-label fw-semibold text-white small">Unggah Bukti Pembayaran (Maks 2MB)</label>
-                <input class="form-control" type="file" id="bukti_pembayaran" name="bukti_pembayaran" accept="image/*" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff;">
+                <label for="bukti_pembayaran" class="form-label fw-semibold small">Unggah Bukti Pembayaran (Maks 2MB)</label>
+                <input class="form-control" type="file" id="bukti_pembayaran" name="bukti_pembayaran" accept="image/*" required>
                 <div class="form-text text-muted" style="font-size: 0.75rem;">Pastikan gambar bukti pembayaran terlihat jelas dan terbaca.</div>
             </div>
             

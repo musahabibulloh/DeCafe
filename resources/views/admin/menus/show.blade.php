@@ -26,6 +26,68 @@
                     @endif
                 </div>
             </div>
+
+            <hr class="my-4">
+
+            @php
+                $optionsByType = $menu->options->groupBy('tipe');
+            @endphp
+
+            <h5 class="mb-3">Opsi Tambahan</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <p class="fw-semibold mb-2">Jenis Lauk</p>
+                    @if($optionsByType->get('lauk', collect())->isNotEmpty())
+                        <ul class="list-group list-group-flush">
+                            @foreach($optionsByType->get('lauk') as $opsi)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $opsi->nama_opsi }}</span>
+                                    <span class="badge bg-{{ $opsi->status === 'tersedia' ? 'success' : 'danger' }}">{{ ucfirst($opsi->status) }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <small class="text-muted d-block mt-2">
+                            Maksimal {{ $menu->maksimal_lauk }} pilihan.
+                            {{ $menu->wajib_pilih_lauk ? 'Wajib dipilih.' : 'Opsional.' }}
+                        </small>
+                    @else
+                        <p class="text-muted">Tidak ada opsi lauk.</p>
+                    @endif
+                </div>
+                <div class="col-md-4">
+                    <p class="fw-semibold mb-2">Jenis Sambal</p>
+                    @if($optionsByType->get('sambal', collect())->isNotEmpty())
+                        <ul class="list-group list-group-flush">
+                            @foreach($optionsByType->get('sambal') as $opsi)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $opsi->nama_opsi }}</span>
+                                    <span class="badge bg-{{ $opsi->status === 'tersedia' ? 'success' : 'danger' }}">{{ ucfirst($opsi->status) }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <small class="text-muted d-block mt-2">
+                            {{ $menu->wajib_pilih_sambal ? 'Wajib dipilih.' : 'Opsional.' }}
+                        </small>
+                    @else
+                        <p class="text-muted">Tidak ada opsi sambal.</p>
+                    @endif
+                </div>
+                <div class="col-md-4">
+                    <p class="fw-semibold mb-2">Ekstra Lauk</p>
+                    @if($optionsByType->get('ekstra_lauk', collect())->isNotEmpty())
+                        <ul class="list-group list-group-flush">
+                            @foreach($optionsByType->get('ekstra_lauk') as $opsi)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>{{ $opsi->nama_opsi }}</span>
+                                    <span class="badge bg-{{ $opsi->status === 'tersedia' ? 'success' : 'danger' }}">{{ ucfirst($opsi->status) }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-muted">Tidak ada ekstra lauk.</p>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 @endsection

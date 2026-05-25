@@ -31,13 +31,25 @@ class MenuController extends Controller
             'stok' => 'required|integer|min:0',
             'status' => 'required|in:tersedia,habis,nonaktif',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'maksimal_lauk' => 'required|integer|min:1|max:10',
+            'wajib_pilih_lauk' => 'nullable|boolean',
+            'wajib_pilih_sambal' => 'nullable|boolean',
+            'options' => 'nullable|array',
+            'options.*.nama_opsi' => 'nullable|string|max:255',
+            'options.*.tipe' => 'nullable|in:lauk,sambal,ekstra_lauk',
+            'options.*.status' => 'nullable|in:tersedia,habis',
         ]);
+
+        $options = $validated['options'] ?? [];
+        unset($validated['options']);
+        $validated = $this->prepareMenuData($validated);
 
         if ($request->hasFile('gambar')) {
             $validated['gambar'] = $request->file('gambar')->store('menus', 'public');
         }
 
-        Menu::create($validated);
+        $menu = Menu::create($validated);
+        $this->syncOptions($menu, $options);
 
         return redirect()->route('admin.menus.index')
             ->with('success', 'Menu berhasil ditambahkan.');
@@ -45,11 +57,15 @@ class MenuController extends Controller
 
     public function show(Menu $menu)
     {
+        $menu->load('options');
+
         return view('admin.menus.show', compact('menu'));
     }
 
     public function edit(Menu $menu)
     {
+        $menu->load('options');
+
         return view('admin.menus.edit', compact('menu'));
     }
 
@@ -63,7 +79,18 @@ class MenuController extends Controller
             'stok' => 'required|integer|min:0',
             'status' => 'required|in:tersedia,habis,nonaktif',
             'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'maksimal_lauk' => 'required|integer|min:1|max:10',
+            'wajib_pilih_lauk' => 'nullable|boolean',
+            'wajib_pilih_sambal' => 'nullable|boolean',
+            'options' => 'nullable|array',
+            'options.*.nama_opsi' => 'nullable|string|max:255',
+            'options.*.tipe' => 'nullable|in:lauk,sambal,ekstra_lauk',
+            'options.*.status' => 'nullable|in:tersedia,habis',
         ]);
+
+        $options = $validated['options'] ?? [];
+        unset($validated['options']);
+        $validated = $this->prepareMenuData($validated);
 
         if ($request->hasFile('gambar')) {
             if ($menu->gambar) {
@@ -73,6 +100,7 @@ class MenuController extends Controller
         }
 
         $menu->update($validated);
+        $this->syncOptions($menu, $options);
 
         return redirect()->route('admin.menus.index')
             ->with('success', 'Menu berhasil diperbarui.');
@@ -88,5 +116,35 @@ class MenuController extends Controller
 
         return redirect()->route('admin.menus.index')
             ->with('success', 'Menu berhasil dihapus.');
+    }
+
+    private function prepareMenuData(array $validated): array
+    {
+        $validated['wajib_pilih_lauk'] = (bool) ($validated['wajib_pilih_lauk'] ?? false);
+        $validated['wajib_pilih_sambal'] = (bool) ($validated['wajib_pilih_sambal'] ?? false);
+
+        return $validated;
+    }
+
+    private function syncOptions(Menu $menu, array $options): void
+    {
+        $menu->options()->delete();
+
+        collect($options)
+            ->map(fn ($option) => [
+                'nama_opsi' => trim($option['nama_opsi'] ?? ''),
+                'tipe' => $option['tipe'] ?? 'lauk',
+                'status' => $option['status'] ?? 'tersedia',
+            ])
+            ->filter(fn ($option) => $option['nama_opsi'] !== '')
+            ->values()
+            ->each(function ($option, $index) use ($menu) {
+                $menu->options()->create([
+                    'nama_opsi' => $option['nama_opsi'],
+                    'tipe' => $option['tipe'],
+                    'status' => $option['status'],
+                    'sort_order' => $index,
+                ]);
+            });
     }
 }

@@ -11,12 +11,12 @@
 
         :root {
             --bg-dark: #08080a;
-            --bg-card: rgba(19, 18, 26, 0.75);
+            --bg-card: rgba(16, 15, 22, 0.9);
             --primary-gradient: linear-gradient(135deg, #e09e39 0%, #b27318 100%);
             --primary-color: #e09e39;
             --text-main: #f5f0e6;
-            --text-muted: #9c97a6;
-            --border-color: rgba(255, 255, 255, 0.06);
+            --text-muted: #c0b8ca;
+            --border-color: rgba(255, 255, 255, 0.18);
         }
 
         body {
@@ -48,7 +48,7 @@
         }
 
         .form-control {
-            background-color: rgba(255, 255, 255, 0.04) !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
             border: 1px solid var(--border-color) !important;
             color: #fff !important;
             border-radius: 10px !important;
@@ -57,7 +57,7 @@
         }
 
         .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.08) !important;
+            background-color: rgba(255, 255, 255, 0.14) !important;
             border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 3px rgba(224, 158, 57, 0.25) !important;
             color: #fff !important;
@@ -155,7 +155,7 @@
                     <label for="password" class="form-label">Password</label>
                     <div class="input-group">
                         <input type="password" name="password" id="password" class="form-control" required>
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border: 1px solid var(--border-color); border-left: none; background-color: rgba(255, 255, 255, 0.04); color: var(--text-muted); border-radius: 0 10px 10px 0 !important; padding: 0.7rem 1.1rem; transition: all 0.2s ease;">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border: 1px solid var(--border-color); border-left: none; background-color: rgba(255, 255, 255, 0.1); color: var(--text-muted); border-radius: 0 10px 10px 0 !important; padding: 0.7rem 1.1rem; transition: all 0.2s ease;">
                             <i class="bi bi-eye-slash" id="toggleIcon"></i>
                         </button>
                     </div>
@@ -171,7 +171,7 @@
                     <hr class="flex-grow-1" style="color: var(--border-color); opacity: 0.2;">
                 </div>
 
-                <a href="{{ route('sso.google') }}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2 py-2" style="border: 1px solid var(--border-color); border-radius: 10px; background-color: rgba(255, 255, 255, 0.02); color: var(--text-main); font-weight: 500; transition: background-color 0.2s ease;">
+                <a href="{{ route('sso.google') }}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2 py-2" style="border: 1px solid var(--border-color); border-radius: 10px; background-color: rgba(255, 255, 255, 0.08); color: var(--text-main); font-weight: 500; transition: background-color 0.2s ease;">
                     <svg class="google-logo" viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
                         <g transform="matrix(1, 0, 0, 1, 0, 0)">
                             <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.05,3.1v2.58h3.31c1.94,-1.78 3.06,-4.41 3.06,-7.48c0,-0.6 -0.05,-1.18 -0.15,-1.7H21.35z" fill="#4285F4" />

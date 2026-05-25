@@ -329,10 +329,10 @@
                     confirmItemsHtml += `
                         <div class="d-flex justify-content-between py-2 border-bottom" style="border-color: var(--border-color) !important;">
                             <div>
-                                <h6 class="mb-0 fw-semibold text-white">${menu.nama_menu}</h6>
+                                <h6 class="mb-0 fw-semibold">${menu.nama_menu}</h6>
                                 <small class="text-muted">${qty} x Rp ${menu.harga.toLocaleString('id-ID')}</small>
                             </div>
-                            <span class="fw-bold text-white">Rp ${subtotal.toLocaleString('id-ID')}</span>
+                            <span class="fw-bold" style="color: var(--text-main);">Rp ${subtotal.toLocaleString('id-ID')}</span>
                         </div>
                     `;
                 }

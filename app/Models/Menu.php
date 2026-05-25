@@ -15,14 +15,28 @@ use Illuminate\Database\Eloquent\Model;
     'stok',
     'status',
     'gambar',
+    'maksimal_lauk',
+    'wajib_pilih_lauk',
+    'wajib_pilih_sambal',
 ])]
 class Menu extends Model
 {
     /** @use HasFactory<MenuFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'maksimal_lauk' => 'integer',
+        'wajib_pilih_lauk' => 'boolean',
+        'wajib_pilih_sambal' => 'boolean',
+    ];
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function options()
+    {
+        return $this->hasMany(MenuOption::class)->orderBy('sort_order')->orderBy('nama_opsi');
     }
 }

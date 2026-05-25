@@ -15,7 +15,8 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $menus = Menu::where('status', 'tersedia')
+        $menus = Menu::with('options')
+            ->where('status', 'tersedia')
             ->where('stok', '>', 0)
             ->orderBy('kategori')
             ->orderBy('nama_menu')
@@ -27,7 +28,8 @@ class CustomerController extends Controller
 
     public function menus()
     {
-        $menus = Menu::where('status', 'tersedia')
+        $menus = Menu::with('options')
+            ->where('status', 'tersedia')
             ->orderBy('kategori')
             ->orderBy('nama_menu')
             ->get()
@@ -38,7 +40,8 @@ class CustomerController extends Controller
 
     public function createOrder()
     {
-        $menus = Menu::where('status', 'tersedia')
+        $menus = Menu::with('options')
+            ->where('status', 'tersedia')
             ->where('stok', '>', 0)
             ->orderBy('kategori')
             ->orderBy('nama_menu')

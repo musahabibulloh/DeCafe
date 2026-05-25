@@ -288,7 +288,7 @@
                 </div>
                 
                 <div class="mb-3">
-                    <label for="modal_nomor_meja" class="form-label fw-bold text-white">Nomor Meja Anda <span class="text-danger">*</span></label>
+                    <label for="modal_nomor_meja" class="form-label fw-bold">Nomor Meja Anda <span class="text-danger">*</span></label>
                     <input type="text" id="modal_nomor_meja" class="form-control" placeholder="Contoh: 05" required>
                     <div class="invalid-feedback" id="modalMejaError" style="display: none;">Nomor meja wajib diisi.</div>
                 </div>
@@ -306,12 +306,12 @@
 </div>
 </div>
 
-<!-- Modal Kustomisasi Nasi Bakar -->
+<!-- Modal Kustomisasi Menu -->
 <div class="modal fade" id="customiseNasiBakarModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="customiseNasiBakarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content" style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
             <div class="modal-header border-bottom" style="border-color: var(--border-color) !important;">
-                <h5 class="modal-title" id="customiseNasiBakarModalLabel">Kustomisasi Nasi Bakar</h5>
+                <h5 class="modal-title" id="customiseNasiBakarModalLabel">Kustomisasi Menu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--theme-close-btn, invert(1));"></button>
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -321,60 +321,24 @@
                 
                 <form id="customiseNasiBakarForm">
 
-                    <!-- Jenis Lauk -->
-                    <div class="mb-4">
+                    <div class="mb-4" id="laukOptionsGroup">
                         <label class="form-label fw-bold mb-2">
-                            Pilih Jenis Lauk <span class="text-danger">*</span>
+                            Pilih Jenis Lauk <span class="text-danger" id="laukRequiredMark">*</span>
                             <span class="small text-muted fw-normal" id="laukLimitHint">(Maksimal 1)</span>
                         </label>
-                        <div class="row g-2">
-                            @foreach([
-                                'Ayam suwir', 'Ikan tuna', 'Usus ayam', 'Ati ayam', 'Ampela ayam',
-                                'Telur dadar', 'Kulit sapi/ kikil / cecek', 'Cumi *', 'Tetelam *', 'Paru *'
-                            ] as $index => $lauk)
-                                <div class="col-sm-6 col-md-4">
-                                    <input type="checkbox" class="btn-check" name="jenis_lauk" id="lauk_{{ $index }}" value="{{ $lauk }}">
-                                    <label class="btn customise-option-btn w-100 text-start py-2 px-3 text-truncate" for="lauk_{{ $index }}">
-                                        {{ $lauk }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
+                        <div class="row g-2" id="laukOptions"></div>
                     </div>
 
-                    <!-- Jenis Sambal -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold mb-2">Pilih Jenis Sambal <span class="text-danger">*</span></label>
-                        <div class="row g-2">
-                            @foreach([
-                                'Sambal bawang', 'Sambal ijo', 'Sambal pedas manis', 'Sambal matah',
-                                'Sambal nanas*', 'Sambal bajak*', 'Tanpa sambal'
-                            ] as $index => $sambal)
-                                <div class="col-sm-6 col-md-4">
-                                    <input type="radio" class="btn-check" name="jenis_sambal" id="sambal_{{ $index }}" value="{{ $sambal }}" {{ $index === 0 ? 'checked' : '' }}>
-                                    <label class="btn customise-option-btn w-100 text-start py-2 px-3 text-truncate" for="sambal_{{ $index }}">
-                                        {{ $sambal }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
+                    <div class="mb-4" id="sambalOptionsGroup">
+                        <label class="form-label fw-bold mb-2">
+                            Pilih Jenis Sambal <span class="text-danger" id="sambalRequiredMark">*</span>
+                        </label>
+                        <div class="row g-2" id="sambalOptions"></div>
                     </div>
 
-                    <!-- Ekstra Lauk -->
-                    <div class="mb-3">
+                    <div class="mb-3" id="ekstraOptionsGroup">
                         <label class="form-label fw-bold mb-2">Pilih Ekstra Lauk (Opsional)</label>
-                        <div class="row g-2">
-                            @foreach([
-                                'Jamur krispi*', 'Telur asin*', 'Sate kulit*'
-                            ] as $index => $ekstra)
-                                <div class="col-md-4">
-                                    <input type="checkbox" class="btn-check" name="ekstra_lauk" id="ekstra_{{ $index }}" value="{{ $ekstra }}">
-                                    <label class="btn customise-option-btn w-100 text-start py-2 px-3" for="ekstra_{{ $index }}">
-                                        <i class="bi bi-plus-lg me-1 small"></i> {{ $ekstra }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
+                        <div class="row g-2" id="ekstraOptions"></div>
                     </div>
                 </form>
             </div>
@@ -395,29 +359,89 @@
     
     const customiseModal = new bootstrap.Modal(document.getElementById('customiseNasiBakarModal'));
 
-    // Handle checkboxes for Jenis Lauk limit dynamically
-    document.querySelectorAll('input[name="jenis_lauk"]').forEach(cb => {
-        cb.addEventListener('change', function() {
-            if (!activeCustomiseMenuId) return;
-            const activeMenu = menuItems[activeCustomiseMenuId];
-            const isMix = activeMenu && activeMenu.nama_menu.toLowerCase().includes('mix');
-            const maxAllowed = isMix ? 2 : 1;
-            
-            const checked = Array.from(document.querySelectorAll('input[name="jenis_lauk"]:checked'));
-            if (checked.length > maxAllowed) {
-                if (maxAllowed === 1) {
-                    // Act like a radio button group (select clicked, uncheck others)
-                    checked.forEach(otherCb => {
-                        if (otherCb !== cb) otherCb.checked = false;
-                    });
-                } else {
-                    // For mix, limit to 2
-                    cb.checked = false;
-                    alert('Untuk Nasi Bakar Mix, Anda hanya dapat memilih maksimal 2 jenis lauk.');
-                }
+    document.getElementById('customiseNasiBakarForm').addEventListener('change', function(event) {
+        if (event.target.name !== 'jenis_lauk' || !activeCustomiseMenuId) return;
+
+        const activeMenu = menuItems[activeCustomiseMenuId];
+        const maxAllowed = parseInt(activeMenu.maksimal_lauk) || 1;
+        const checked = Array.from(document.querySelectorAll('input[name="jenis_lauk"]:checked'));
+
+        if (checked.length > maxAllowed) {
+            if (maxAllowed === 1) {
+                checked.forEach(otherCb => {
+                    if (otherCb !== event.target) otherCb.checked = false;
+                });
+            } else {
+                event.target.checked = false;
+                alert(`Pilihan lauk maksimal ${maxAllowed}.`);
             }
-        });
+        }
     });
+
+    function hasCustomOptions(menu) {
+        return hasItems(menu.options);
+    }
+
+    function hasItems(value) {
+        return Array.isArray(value) && value.length > 0;
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function optionsByType(menu, type) {
+        return Array.isArray(menu.options)
+            ? menu.options.filter(option => option.tipe === type)
+            : [];
+    }
+
+    function renderOptionButtons(containerId, name, options, type, icon = '') {
+        const container = document.getElementById(containerId);
+        container.innerHTML = options.map((option, index) => {
+            const id = `${name}_${index}`;
+            const isAvailable = option.status === 'tersedia';
+            const firstAvailableIndex = options.findIndex(item => item.status === 'tersedia');
+            const checked = type === 'radio' && index === firstAvailableIndex ? 'checked' : '';
+            const disabled = isAvailable ? '' : 'disabled';
+            const statusLabel = isAvailable ? '' : '<span class="badge bg-danger ms-2">Habis</span>';
+            return `
+                <div class="col-sm-6 col-md-4">
+                    <input type="${type}" class="btn-check" name="${name}" id="${id}" value="${escapeHtml(option.nama_opsi)}" ${checked} ${disabled}>
+                    <label class="btn customise-option-btn w-100 text-start py-2 px-3 text-truncate" for="${id}">
+                        ${icon} ${escapeHtml(option.nama_opsi)} ${statusLabel}
+                    </label>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function prepareCustomiseModal(menu, nextPortionNumber) {
+        const laukOptions = optionsByType(menu, 'lauk');
+        const sambalOptions = optionsByType(menu, 'sambal');
+        const ekstraOptions = optionsByType(menu, 'ekstra_lauk');
+        const maxLauk = parseInt(menu.maksimal_lauk) || 1;
+
+        document.getElementById('customiseNasiBakarModalLabel').textContent = 'Kustomisasi ' + menu.nama_menu;
+        document.getElementById('customisePorsiTitle').textContent = `Porsi #${nextPortionNumber}`;
+        document.getElementById('laukLimitHint').textContent = `(Maksimal ${maxLauk})`;
+        document.getElementById('laukRequiredMark').style.display = menu.wajib_pilih_lauk ? '' : 'none';
+        document.getElementById('sambalRequiredMark').style.display = menu.wajib_pilih_sambal ? '' : 'none';
+
+        document.getElementById('customiseNasiBakarForm').reset();
+        document.getElementById('laukOptionsGroup').style.display = hasItems(laukOptions) ? '' : 'none';
+        document.getElementById('sambalOptionsGroup').style.display = hasItems(sambalOptions) ? '' : 'none';
+        document.getElementById('ekstraOptionsGroup').style.display = hasItems(ekstraOptions) ? '' : 'none';
+
+        renderOptionButtons('laukOptions', 'jenis_lauk', laukOptions, 'checkbox');
+        renderOptionButtons('sambalOptions', 'jenis_sambal', sambalOptions, 'radio');
+        renderOptionButtons('ekstraOptions', 'ekstra_lauk', ekstraOptions, 'checkbox', '<i class="bi bi-plus-lg me-1 small"></i>');
+    }
 
     function decrementQty(menuId) {
         const input = document.getElementById(`qty-input-${menuId}`);
@@ -425,9 +449,9 @@
         let val = parseInt(input.value) || 0;
         if (val > 0) {
             const menu = menuItems[menuId];
-            const isNasiBakar = menu && menu.nama_menu.toLowerCase().includes('nasi bakar');
+            const needsCustomOptions = menu && hasCustomOptions(menu);
             
-            if (isNasiBakar && menuCustomizations[menuId]) {
+            if (needsCustomOptions && menuCustomizations[menuId]) {
                 menuCustomizations[menuId].pop();
                 document.getElementById(`catatan-${menuId}`).value = menuCustomizations[menuId].join(' \n ');
             }
@@ -443,27 +467,13 @@
         let val = parseInt(input.value) || 0;
         
         const menu = menuItems[menuId];
-        const isNasiBakar = menu && menu.nama_menu.toLowerCase().includes('nasi bakar');
+        const needsCustomOptions = menu && hasCustomOptions(menu);
 
-        if (isNasiBakar) {
+        if (needsCustomOptions) {
             if (val >= maxStok) return;
             activeCustomiseMenuId = menuId;
             activeCustomiseMaxStok = maxStok;
-            
-            const isMix = menu.nama_menu.toLowerCase().includes('mix');
-            
-            // Set header modal title dynamically based on menu name
-            document.getElementById('customiseNasiBakarModalLabel').textContent = 'Kustomisasi ' + menu.nama_menu;
-            
-            // Set label and helper text for lauk limit
-            document.getElementById('laukLimitHint').textContent = isMix ? '(Maksimal 2)' : '(Maksimal 1)';
-            
-            // Set header portion title
-            document.getElementById('customisePorsiTitle').textContent = `Porsi #${val + 1}`;
-            
-            // Reset form to defaults
-            document.getElementById('customiseNasiBakarForm').reset();
-            
+            prepareCustomiseModal(menu, val + 1);
             customiseModal.show();
         } else {
             if (val < maxStok) {
@@ -477,6 +487,7 @@
         if (!activeCustomiseMenuId) return;
 
         const form = document.getElementById('customiseNasiBakarForm');
+        const activeMenu = menuItems[activeCustomiseMenuId];
         
         // Get selected lauk values
         let selectedLauk = [];
@@ -484,13 +495,18 @@
             selectedLauk.push(cb.value);
         });
         
-        if (selectedLauk.length === 0) {
+        if (activeMenu.wajib_pilih_lauk && selectedLauk.length === 0) {
             alert('Silakan pilih minimal 1 jenis lauk.');
             return;
         }
 
         // Get selected sambal
-        const jenisSambal = form.querySelector('input[name="jenis_sambal"]:checked').value;
+        const selectedSambal = form.querySelector('input[name="jenis_sambal"]:checked');
+        if (activeMenu.wajib_pilih_sambal && !selectedSambal) {
+            alert('Silakan pilih jenis sambal.');
+            return;
+        }
+        const jenisSambal = selectedSambal ? selectedSambal.value : 'Tidak ada';
         
         // Get checked extra options
         let ekstraLauk = [];
@@ -506,7 +522,8 @@
         const currentVal = parseInt(qtyInput.value) || 0;
         const porsiNum = currentVal + 1;
 
-        const customizationText = `Porsi #${porsiNum} [Lauk: ${selectedLauk.join(', ')} | Sambal: ${jenisSambal} | Ekstra: ${ekstraStr}]`;
+        const laukStr = selectedLauk.length > 0 ? selectedLauk.join(', ') : 'Tidak ada';
+        const customizationText = `Porsi #${porsiNum} [Lauk: ${laukStr} | Sambal: ${jenisSambal} | Ekstra: ${ekstraStr}]`;
 
         if (!menuCustomizations[activeCustomiseMenuId]) {
             menuCustomizations[activeCustomiseMenuId] = [];
@@ -658,7 +675,7 @@
 
                     htmlContent += `<div class="list-group-item px-0 py-2 bg-transparent border-0 border-bottom d-flex justify-content-between align-items-start">
                         <div style="flex-grow: 1; min-width: 0;">
-                            <span class="fw-semibold text-white d-block text-truncate">${menu.nama_menu}</span>
+                            <span class="fw-semibold d-block text-truncate">${menu.nama_menu}</span>
                             <small class="text-muted d-block">${qty}x @ Rp ${menu.harga.toLocaleString('id-ID')}</small>
                             ${catatanHtml}
                         </div>

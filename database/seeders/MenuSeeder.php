@@ -12,6 +12,35 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
+        $defaultLauk = [
+            'Ayam suwir',
+            'Ikan tuna',
+            'Usus ayam',
+            'Ati ayam',
+            'Ampela ayam',
+            'Telur dadar',
+            'Kulit sapi/ kikil / cecek',
+            'Cumi *',
+            'Tetelam *',
+            'Paru *',
+        ];
+
+        $defaultSambal = [
+            'Sambal bawang',
+            'Sambal ijo',
+            'Sambal pedas manis',
+            'Sambal matah',
+            'Sambal nanas*',
+            'Sambal bajak*',
+            'Tanpa sambal',
+        ];
+
+        $defaultEkstra = [
+            'Jamur krispi*',
+            'Telur asin*',
+            'Sate kulit*',
+        ];
+
         $menus = [
             [
                 'nama_menu' => 'Nasi bakar regular ( tidak mix)',
@@ -19,6 +48,9 @@ class MenuSeeder extends Seeder
                 'harga' => 15000,
                 'stok' => 50,
                 'status' => 'tersedia',
+                'maksimal_lauk' => 1,
+                'wajib_pilih_lauk' => true,
+                'wajib_pilih_sambal' => true,
             ],
             [
                 'nama_menu' => 'Nasi bakar mix',
@@ -26,6 +58,9 @@ class MenuSeeder extends Seeder
                 'harga' => 20000,
                 'stok' => 50,
                 'status' => 'tersedia',
+                'maksimal_lauk' => 2,
+                'wajib_pilih_lauk' => true,
+                'wajib_pilih_sambal' => true,
             ],
             [
                 'nama_menu' => 'Nasi bakar jumbo ( porsi ekstra)',
@@ -33,14 +68,47 @@ class MenuSeeder extends Seeder
                 'harga' => 25000,
                 'stok' => 50,
                 'status' => 'tersedia',
+                'maksimal_lauk' => 1,
+                'wajib_pilih_lauk' => true,
+                'wajib_pilih_sambal' => true,
             ],
         ];
 
         foreach ($menus as $menu) {
-            Menu::updateOrCreate(
+            $model = Menu::updateOrCreate(
                 ['nama_menu' => $menu['nama_menu']],
                 $menu
             );
+
+            $model->options()->delete();
+
+            $sortOrder = 0;
+            foreach ($defaultLauk as $option) {
+                $model->options()->create([
+                    'nama_opsi' => $option,
+                    'tipe' => 'lauk',
+                    'status' => 'tersedia',
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
+
+            foreach ($defaultSambal as $option) {
+                $model->options()->create([
+                    'nama_opsi' => $option,
+                    'tipe' => 'sambal',
+                    'status' => 'tersedia',
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
+
+            foreach ($defaultEkstra as $option) {
+                $model->options()->create([
+                    'nama_opsi' => $option,
+                    'tipe' => 'ekstra_lauk',
+                    'status' => 'tersedia',
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
         }
     }
 }

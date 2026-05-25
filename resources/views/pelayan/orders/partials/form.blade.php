@@ -41,7 +41,7 @@
                 @endphp
                 <tr>
                     <td>
-                        <span class="fw-semibold text-white">{{ $menu->nama_menu }}</span>
+                        <span class="fw-semibold">{{ $menu->nama_menu }}</span>
                         <input type="hidden" name="items[{{ $index }}][menu_id]" value="{{ $menu->id }}">
                     </td>
                     <td>Rp {{ number_format($menu->harga, 0, ',', '.') }}</td>
