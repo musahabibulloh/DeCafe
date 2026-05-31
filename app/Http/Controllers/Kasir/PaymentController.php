@@ -76,10 +76,17 @@ class PaymentController extends Controller
                 'paid_at' => Carbon::now(),
             ]);
 
+            $nextStatus = $order->status_pesanan;
+            if ($order->status_pesanan === 'menunggu') {
+                $nextStatus = 'diterima_dapur';
+            } elseif ($order->status_pesanan === 'siap_saji') {
+                $nextStatus = 'selesai';
+            }
+
             $order->update([
                 'nomor_meja' => $validated['nomor_meja'],
                 'status_pembayaran' => 'lunas',
-                'status_pesanan' => 'selesai',
+                'status_pesanan' => $nextStatus,
             ]);
         });
 

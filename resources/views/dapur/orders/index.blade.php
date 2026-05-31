@@ -14,6 +14,7 @@
                         <tr>
                             <th>Kode</th>
                             <th>Meja</th>
+                            <th>Atas Nama</th>
                             <th>Total</th>
                             <th>Status</th>
                             <th class="text-end">Aksi</th>
@@ -24,6 +25,7 @@
                             <tr>
                                 <td>{{ $order->kode_pesanan }}</td>
                                 <td>{{ $order->nomor_meja }}</td>
+                                <td>{{ $order->atas_nama ?? $order->nama_pelanggan ?? '-' }}</td>
                                 <td>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</td>
                                 <td>
                                     <span class="badge bg-{{ $order->status_pesanan === 'menunggu' ? 'warning' : ($order->status_pesanan === 'diproses' ? 'info' : 'secondary') }}">
@@ -36,7 +38,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Belum ada pesanan.</td>
+                                <td colspan="6" class="text-center text-muted">Belum ada pesanan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -57,8 +59,8 @@
                             <hr class="my-2 opacity-50" style="color: var(--bs-body-color);">
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <small class="text-muted d-block">Meja</small>
-                                    <span class="fw-semibold">{{ $order->nomor_meja }}</span>
+                                    <small class="text-muted d-block">Meja / Atas Nama</small>
+                                    <span class="fw-semibold">{{ $order->nomor_meja }} / {{ $order->atas_nama ?? $order->nama_pelanggan ?? '-' }}</span>
                                 </div>
                                 <div class="col-6 text-end">
                                     <small class="text-muted d-block">Total</small>

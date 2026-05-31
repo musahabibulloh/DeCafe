@@ -52,6 +52,7 @@ Route::middleware(['auth', 'role:kasir'])->prefix('kasir')->name('kasir.')->grou
     Route::get('/orders/{order}/payment', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/orders/{order}/payment', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
+    Route::post('/orders/{order}/complete', [CashierOrderController::class, 'complete'])->name('orders.complete');
 });
 
 // Customer routes
@@ -74,6 +75,7 @@ Route::middleware(['auth', 'role:pelayan'])->prefix('pelayan')->name('pelayan.')
     Route::get('/dashboard', [PelayanDashboardController::class, 'index'])->name('dashboard');
     Route::resource('/orders', PelayanOrderController::class);
     Route::post('/orders/{order}/cancel', [PelayanOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('/orders/{order}/complete', [PelayanOrderController::class, 'complete'])->name('orders.complete');
 });
 
 // Dapur routes

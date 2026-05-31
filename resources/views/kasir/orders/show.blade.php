@@ -112,6 +112,12 @@
         @if ($order->status_pembayaran !== 'lunas' && $order->status_pesanan !== 'dibatalkan')
             <a href="{{ route('kasir.payments.create', $order) }}" class="btn btn-success">Konfirmasi Pembayaran</a>
         @endif
+        @if ($order->status_pesanan === 'siap_saji')
+            <form action="{{ route('kasir.orders.complete', $order) }}" method="POST" onsubmit="return confirm('Selesaikan pesanan ini?')">
+                @csrf
+                <button class="btn btn-success" type="submit"><i class="bi bi-check2-circle me-1"></i> Selesaikan Pesanan</button>
+            </form>
+        @endif
         @if ($order->payment)
             <a href="{{ route('kasir.payments.receipt', $order->payment) }}" class="btn btn-outline-primary">Lihat Struk</a>
         @endif

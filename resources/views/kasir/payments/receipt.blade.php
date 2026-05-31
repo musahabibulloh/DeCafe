@@ -34,7 +34,7 @@
         <div class="mb-3">
             <p><strong>Kode Pembayaran:</strong> {{ $payment->kode_pembayaran }}</p>
             <p><strong>Kode Pesanan:</strong> {{ $payment->order->kode_pesanan }}</p>
-            <p><strong>Nama Pelanggan:</strong> {{ $payment->order->nama_pelanggan ?? '-' }}</p>
+            <p><strong>Atas Nama:</strong> {{ $payment->order->atas_nama ?? $payment->order->nama_pelanggan ?? '-' }}</p>
             <p><strong>Nomor Meja:</strong> {{ $payment->order->nomor_meja }}</p>
             <p><strong>Nama Kasir:</strong> {{ $payment->kasir->name ?? '-' }}</p>
             <p><strong>Tanggal Bayar:</strong> {{ optional($payment->paid_at)->format('d M Y H:i') }}</p>

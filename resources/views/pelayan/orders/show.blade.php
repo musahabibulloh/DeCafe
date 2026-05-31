@@ -93,4 +93,20 @@
             </div>
         </div>
     </div>
+
+    <div class="d-flex gap-2 mt-4">
+        @if ($order->status_pesanan === 'siap_saji')
+            <form action="{{ route('pelayan.orders.complete', $order) }}" method="POST" onsubmit="return confirm('Selesaikan pesanan ini (sudah disajikan)?')">
+                @csrf
+                <button class="btn btn-success" type="submit"><i class="bi bi-check2-circle me-1"></i> Selesaikan Pesanan</button>
+            </form>
+        @endif
+        @if ($order->status_pesanan === 'menunggu')
+            <a href="{{ route('pelayan.orders.edit', $order) }}" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i> Ubah Pesanan</a>
+            <form action="{{ route('pelayan.orders.cancel', $order) }}" method="POST" onsubmit="return confirm('Batalkan pesanan ini?')">
+                @csrf
+                <button class="btn btn-danger" type="submit"><i class="bi bi-x-circle me-1"></i> Batalkan Pesanan</button>
+            </form>
+        @endif
+    </div>
 @endsection

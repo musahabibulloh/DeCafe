@@ -260,6 +260,24 @@ class OrderController extends Controller
             ->with('success', 'Pesanan berhasil dibatalkan.');
     }
 
+    public function complete(Order $order)
+    {
+        $this->authorizeOrder($order);
+
+        if ($order->status_pesanan !== 'siap_saji') {
+            return back()->with('error', 'Hanya pesanan siap saji yang bisa diselesaikan.');
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->update([
+                'status_pesanan' => 'selesai',
+            ]);
+        });
+
+        return redirect()->route('pelayan.orders.index')
+            ->with('success', 'Pesanan berhasil diselesaikan.');
+    }
+
     private function authorizeOrder(Order $order): void
     {
         // Waiters have access to all orders in the system

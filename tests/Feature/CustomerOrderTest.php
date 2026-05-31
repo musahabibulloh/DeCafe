@@ -120,10 +120,10 @@ class CustomerOrderTest extends TestCase
             ->post(route('customer.orders.simulate-qris-pay', $order));
         $simResponse->assertJson(['success' => true]);
 
-        // Verify status is updated to selesai and lunas
+        // Verify status is updated to diterima_dapur and lunas
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
-            'status_pesanan' => 'selesai',
+            'status_pesanan' => 'diterima_dapur',
             'status_pembayaran' => 'lunas',
         ]);
 
