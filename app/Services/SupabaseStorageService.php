@@ -33,8 +33,7 @@ class SupabaseStorageService
         $config = self::getConfig();
 
         if (empty($config['url']) || empty($config['key'])) {
-            // Fallback to local disk
-            return $file->store($folder, 'public');
+            throw new \RuntimeException('Konfigurasi Supabase URL atau Key tidak ditemukan di file .env.');
         }
 
         $filename = Str::random(40) . '.' . $file->getClientOriginalExtension();
@@ -56,12 +55,14 @@ class SupabaseStorageService
             }
 
             Log::error('Supabase upload failed: ' . $response->body());
+            throw new \RuntimeException('Gagal mengunggah gambar ke Supabase Storage: ' . $response->body());
         } catch (\Exception $e) {
             Log::error('Supabase upload exception: ' . $e->getMessage());
+            if ($e instanceof \RuntimeException) {
+                throw $e;
+            }
+            throw new \RuntimeException('Kesalahan saat mengunggah gambar ke Supabase: ' . $e->getMessage(), 0, $e);
         }
-
-        // Fallback to local storage on failure
-        return $file->store($folder, 'public');
     }
 
     /**
