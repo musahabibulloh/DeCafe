@@ -19,8 +19,8 @@
                 <div class="col-md-6">
                     <p><strong>Deskripsi:</strong></p>
                     <p>{{ $menu->deskripsi ?? '-' }}</p>
-                    @if ($menu->gambar)
-                        <img src="{{ asset('storage/' . $menu->gambar) }}" alt="{{ $menu->nama_menu }}" class="img-fluid rounded">
+                    @if ($menu->gambar_url)
+                        <img src="{{ $menu->gambar_url }}" alt="{{ $menu->nama_menu }}" class="img-fluid rounded">
                     @else
                         <p class="text-muted">Tidak ada gambar.</p>
                     @endif

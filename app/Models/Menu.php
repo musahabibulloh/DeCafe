@@ -39,4 +39,17 @@ class Menu extends Model
     {
         return $this->hasMany(MenuOption::class)->orderBy('sort_order')->orderBy('nama_opsi');
     }
+
+    public function getGambarUrlAttribute()
+    {
+        if (empty($this->gambar)) {
+            return null;
+        }
+
+        if (\Illuminate\Support\Str::startsWith($this->gambar, ['http://', 'https://'])) {
+            return $this->gambar;
+        }
+
+        return asset('storage/' . $this->gambar);
+    }
 }

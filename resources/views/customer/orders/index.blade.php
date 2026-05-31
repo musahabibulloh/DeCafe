@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pesanan Saya - DeCafe')
+@section('title', 'Pesanan Saya - Nasi Bakar Cak Win')
 
 @section('content')
 <div class="container-fluid">
@@ -77,10 +77,7 @@
                                     <td>
                                         <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-sm btn-primary">Detail</a>
                                         @if($order->status_pembayaran !== 'lunas' && $order->status_pesanan !== 'dibatalkan')
-                                            <form action="{{ route('customer.orders.pay', $order) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Bayar pesanan ini?')">Bayar</button>
-                                            </form>
+                                            <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-sm btn-success">Bayar</a>
                                         @endif
                                     </td>
                                 </tr>
@@ -145,10 +142,7 @@
                                 <div class="d-grid gap-2 d-flex justify-content-end mt-2 pt-2 border-top" style="border-top-color: rgba(var(--bs-body-color-rgb), 0.1) !important;">
                                     <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-sm btn-primary px-3">Detail</a>
                                     @if($order->status_pembayaran !== 'lunas' && $order->status_pesanan !== 'dibatalkan')
-                                        <form action="{{ route('customer.orders.pay', $order) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-success px-3" onclick="return confirm('Bayar pesanan ini?')">Bayar</button>
-                                        </form>
+                                        <a href="{{ route('customer.orders.show', $order) }}" class="btn btn-sm btn-success px-3">Bayar</a>
                                     @endif
                                 </div>
                             </div>

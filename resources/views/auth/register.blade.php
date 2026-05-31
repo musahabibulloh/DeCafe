@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registrasi - DeCafe</title>
+    <title>Registrasi - Nasi Bakar Cak Win</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -133,8 +133,8 @@
     <div class="card register-card shadow">
         <div class="card-body p-5">
             <div class="text-center mb-4">
-                <span class="brand-title">DeCafe</span>
-                <p class="text-muted mt-1 mb-0">Daftar akun baru DeCafe</p>
+                <span class="brand-title">Nasi Bakar Cak Win</span>
+                <p class="text-muted mt-1 mb-0">Daftar akun baru Nasi Bakar Cak Win</p>
             </div>
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>

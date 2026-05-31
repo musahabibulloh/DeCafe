@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Menu - DeCafe')
+@section('title', 'Menu - Nasi Bakar Cak Win')
 
 @section('content')
 <div class="container-fluid">
@@ -23,8 +23,8 @@
                     @foreach($items as $menu)
                         <div class="col-md-4 col-lg-3 mb-3">
                             <div class="card h-100 border">
-                                @if($menu->gambar)
-                                    <img src="{{ asset('storage/' . $menu->gambar) }}" class="card-img-top" alt="{{ $menu->nama_menu }}" style="height: 150px; object-fit: cover;">
+                                @if($menu->gambar_url)
+                                    <img src="{{ $menu->gambar_url }}" class="card-img-top" alt="{{ $menu->nama_menu }}" style="height: 150px; object-fit: cover;">
                                 @else
                                     <div class="bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
                                         <span class="text-muted">Tanpa Gambar</span>

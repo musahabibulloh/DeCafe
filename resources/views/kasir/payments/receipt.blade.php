@@ -27,7 +27,7 @@
 <body>
     <div class="receipt">
         <div class="text-center mb-4">
-            <h3 class="mb-1">DeCafe</h3>
+            <h3 class="mb-1">Nasi Bakar Cak Win</h3>
             <p class="mb-0">Bukti Pembayaran</p>
         </div>
 

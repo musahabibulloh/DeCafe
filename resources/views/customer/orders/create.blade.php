@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pesan Menu - DeCafe')
+@section('title', 'Pesan Menu - Nasi Bakar Cak Win')
 
 @section('content')
 <style>

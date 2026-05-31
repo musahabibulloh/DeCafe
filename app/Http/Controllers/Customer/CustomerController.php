@@ -23,7 +23,13 @@ class CustomerController extends Controller
             ->get()
             ->groupBy('kategori');
 
-        return view('customer.dashboard', compact('menus'));
+        // Get table number from QR scan session
+        $nomorMeja = session('nomor_meja');
+
+        // Fetch all lauk options from database
+        $lauks = \App\Models\Lauk::all();
+
+        return view('customer.dashboard', compact('menus', 'nomorMeja', 'lauks'));
     }
 
     public function menus()
@@ -55,6 +61,8 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'nomor_meja' => 'nullable|string|max:50',
+            'atas_nama' => 'required|string|max:100',
+            'tipe_pesanan' => 'required|in:dine_in,take_away',
             'items' => 'required|array|min:1',
             'items.*.menu_id' => 'required|exists:menus,id',
             'items.*.jumlah' => 'required|integer|min:0',
@@ -75,7 +83,9 @@ class CustomerController extends Controller
                     'kode_pesanan' => $this->generateOrderCode(),
                     'user_id' => auth()->id(),
                     'nama_pelanggan' => auth()->user()->name,
-                    'nomor_meja' => $validated['nomor_meja'] ?? '-',
+                    'atas_nama' => $validated['atas_nama'],
+                    'tipe_pesanan' => $validated['tipe_pesanan'],
+                    'nomor_meja' => session('nomor_meja', $validated['nomor_meja'] ?? '-'),
                     'total_harga' => 0,
                     'status_pesanan' => 'menunggu',
                     'status_pembayaran' => 'belum_bayar',
@@ -89,18 +99,38 @@ class CustomerController extends Controller
                         throw new \RuntimeException('Stok menu tidak mencukupi untuk ' . $menu->nama_menu . '.');
                     }
 
-                    $subtotal = $menu->harga * $item['jumlah'];
-                    $total += $subtotal;
+                    $catatan = $item['catatan_item'] ?? '';
+                    $catatanLines = $catatan ? explode(" \n ", $catatan) : [];
 
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'menu_id' => $menu->id,
-                        'nama_menu' => $menu->nama_menu,
-                        'harga' => $menu->harga,
-                        'jumlah' => $item['jumlah'],
-                        'subtotal' => $subtotal,
-                        'catatan_item' => $item['catatan_item'] ?? null,
-                    ]);
+                    if (!empty($catatanLines)) {
+                        foreach ($catatanLines as $line) {
+                            $portionPrice = Order::calculatePortionPrice($menu, $line);
+                            $total += $portionPrice;
+
+                            OrderItem::create([
+                                'order_id' => $order->id,
+                                'menu_id' => $menu->id,
+                                'nama_menu' => $menu->nama_menu,
+                                'harga' => $portionPrice,
+                                'jumlah' => 1,
+                                'subtotal' => $portionPrice,
+                                'catatan_item' => $line,
+                            ]);
+                        }
+                    } else {
+                        $subtotal = $menu->harga * $item['jumlah'];
+                        $total += $subtotal;
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $menu->id,
+                            'nama_menu' => $menu->nama_menu,
+                            'harga' => $menu->harga,
+                            'jumlah' => $item['jumlah'],
+                            'subtotal' => $subtotal,
+                            'catatan_item' => null,
+                        ]);
+                    }
 
                     $menu->decrement('stok', $item['jumlah']);
                 }

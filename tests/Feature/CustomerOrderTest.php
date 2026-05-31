@@ -54,6 +54,8 @@ class CustomerOrderTest extends TestCase
         $response = $this->actingAs($customer)
             ->post(route('customer.orders.store'), [
                 'nomor_meja' => '05',
+                'atas_nama' => 'Budi',
+                'tipe_pesanan' => 'dine_in',
                 'items' => [
                     $menu1->id => [
                         'menu_id' => $menu1->id,
@@ -111,7 +113,12 @@ class CustomerOrderTest extends TestCase
         $payResponse = $this->actingAs($customer)
             ->post(route('customer.orders.pay', $order));
 
-        $payResponse->assertRedirect(route('customer.orders.show', $order));
+        $payResponse->assertRedirect(route('customer.orders.qris', $order));
+
+        // Simulate paying QRIS
+        $simResponse = $this->actingAs($customer)
+            ->post(route('customer.orders.simulate-qris-pay', $order));
+        $simResponse->assertJson(['success' => true]);
 
         // Verify status is updated to selesai and lunas
         $this->assertDatabaseHas('orders', [

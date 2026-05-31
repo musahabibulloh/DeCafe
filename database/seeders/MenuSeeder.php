@@ -12,6 +12,24 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
+        // Update old menu names and prices to avoid duplication and preserve IDs
+        Menu::where('nama_menu', 'Nasi bakar regular ( tidak mix)')->update([
+            'nama_menu' => 'Nasi bakar reguler',
+            'harga' => 10000
+        ]);
+        Menu::where('nama_menu', 'Nasi bakar reguler (Lauk Biasa)')->update([
+            'nama_menu' => 'Nasi bakar reguler',
+            'harga' => 10000
+        ]);
+        Menu::where('nama_menu', 'Nasi bakar reguler (Lauk Premium: Cumi/Tetelan/Paru)')->delete();
+        Menu::where('nama_menu', 'Nasi bakar jumbo ( porsi ekstra)')->update([
+            'nama_menu' => 'Nasi bakar jumbo',
+            'harga' => 15000
+        ]);
+        Menu::where('nama_menu', 'Nasi bakar mix')->update([
+            'harga' => 12000
+        ]);
+
         $defaultLauk = [
             'Ayam suwir',
             'Ikan tuna',
@@ -43,9 +61,9 @@ class MenuSeeder extends Seeder
 
         $menus = [
             [
-                'nama_menu' => 'Nasi bakar regular ( tidak mix)',
+                'nama_menu' => 'Nasi bakar reguler',
                 'kategori' => 'makanan',
-                'harga' => 15000,
+                'harga' => 10000,
                 'stok' => 50,
                 'status' => 'tersedia',
                 'maksimal_lauk' => 1,
@@ -55,7 +73,7 @@ class MenuSeeder extends Seeder
             [
                 'nama_menu' => 'Nasi bakar mix',
                 'kategori' => 'makanan',
-                'harga' => 20000,
+                'harga' => 12000,
                 'stok' => 50,
                 'status' => 'tersedia',
                 'maksimal_lauk' => 2,
@@ -63,9 +81,9 @@ class MenuSeeder extends Seeder
                 'wajib_pilih_sambal' => true,
             ],
             [
-                'nama_menu' => 'Nasi bakar jumbo ( porsi ekstra)',
+                'nama_menu' => 'Nasi bakar jumbo',
                 'kategori' => 'makanan',
-                'harga' => 25000,
+                'harga' => 15000,
                 'stok' => 50,
                 'status' => 'tersedia',
                 'maksimal_lauk' => 1,

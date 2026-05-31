@@ -2,7 +2,7 @@
     <div class="d-flex flex-column justify-content-between w-100" style="min-height: calc(100vh - 3rem);">
         <div>
             <div class="d-flex align-items-center justify-content-between mb-3 px-3">
-                <a class="navbar-brand mb-0" href="#" style="margin-bottom: 0 !important; flex-grow: 1; text-align: left;">DeCafe</a>
+                <a class="navbar-brand mb-0" href="#" style="margin-bottom: 0 !important; flex-grow: 1; text-align: left;">Nasi Bakar Cak Win</a>
                 <button class="btn-close d-md-none" type="button" data-bs-toggle="collapse" data-bs-target=".sidebar" aria-label="Close"></button>
             </div>
             
@@ -27,6 +27,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.lauks.*') ? 'active' : '' }}" href="{{ route('admin.lauks.index') }}">
+                                <i class="bi bi-gear-fill"></i> Kelola Lauk & Ekstra
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-people-fill"></i> Kelola User
                             </a>
@@ -34,6 +39,11 @@
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
                                 <i class="bi bi-graph-up-arrow"></i> Laporan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.meja.*') ? 'active' : '' }}" href="{{ route('admin.meja.index') }}">
+                                <i class="bi bi-qr-code-scan"></i> Kelola Meja & QR
                             </a>
                         </li>
 

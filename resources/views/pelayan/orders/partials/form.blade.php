@@ -7,9 +7,36 @@
         @enderror
     </div>
     <div class="col-md-6">
-        <label class="form-label">Nama Pelanggan</label>
+        <label class="form-label">Atas Nama (Pemesan) <span class="text-danger">*</span></label>
+        <input type="text" name="atas_nama" class="form-control" value="{{ old('atas_nama', $order->atas_nama ?? '') }}" placeholder="Nama pemesan" required>
+        @error('atas_nama')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Nama Pelanggan (User Akun)</label>
         <input type="text" name="nama_pelanggan" class="form-control" value="{{ old('nama_pelanggan', $order->nama_pelanggan ?? '') }}" placeholder="Nama pelanggan (opsional)">
         @error('nama_pelanggan')
+            <small class="text-danger">{{ $message }}</small>
+        @enderror
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Tipe Pesanan <span class="text-danger">*</span></label>
+        <div class="d-flex gap-3 pt-2">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipe_pesanan" id="tipe_dine_in" value="dine_in" {{ old('tipe_pesanan', $order->tipe_pesanan ?? 'dine_in') === 'dine_in' ? 'checked' : '' }}>
+                <label class="form-check-label" for="tipe_dine_in">
+                    Dine In (Makan di Tempat)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipe_pesanan" id="tipe_take_away" value="take_away" {{ old('tipe_pesanan', $order->tipe_pesanan ?? '') === 'take_away' ? 'checked' : '' }}>
+                <label class="form-check-label" for="tipe_take_away">
+                    Take Away (Bungkus)
+                </label>
+            </div>
+        </div>
+        @error('tipe_pesanan')
             <small class="text-danger">{{ $message }}</small>
         @enderror
     </div>

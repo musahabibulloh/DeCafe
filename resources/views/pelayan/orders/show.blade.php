@@ -10,7 +10,15 @@
         <div class="card-body">
             <p><strong>Kode Pesanan:</strong> {{ $order->kode_pesanan }}</p>
             <p><strong>Nomor Meja:</strong> {{ $order->nomor_meja }}</p>
+            <p><strong>Atas Nama:</strong> {{ $order->atas_nama ?? '-' }}</p>
             <p><strong>Nama Pelanggan:</strong> {{ $order->nama_pelanggan ?? '-' }}</p>
+            <p><strong>Tipe Pesanan:</strong>
+                @if($order->tipe_pesanan === 'take_away')
+                    <span class="badge bg-info"><i class="bi bi-bag me-1"></i>Take Away (Bungkus)</span>
+                @else
+                    <span class="badge bg-primary"><i class="bi bi-shop me-1"></i>Dine In (Makan di Tempat)</span>
+                @endif
+            </p>
             <p><strong>Status Pesanan:</strong> {{ str_replace('_', ' ', $order->status_pesanan) }}</p>
             <p><strong>Status Pembayaran:</strong> {{ str_replace('_', ' ', $order->status_pembayaran) }}</p>
             <p><strong>Catatan:</strong> {{ $order->catatan ?? '-' }}</p>

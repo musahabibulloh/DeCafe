@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Pesanan - DeCafe')
+@section('title', 'Detail Pesanan - Nasi Bakar Cak Win')
 
 @section('content')
 <div class="container-fluid">
@@ -27,7 +27,15 @@
                         <div class="col-md-6">
                             <p><strong>Kode Pesanan:</strong> {{ $order->kode_pesanan }}</p>
                             <p><strong>Tanggal:</strong> {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                            <p><strong>Atas Nama:</strong> {{ $order->atas_nama ?? '-' }}</p>
                             <p><strong>Nomor Meja:</strong> {{ $order->nomor_meja }}</p>
+                            <p><strong>Tipe Pesanan:</strong>
+                                @if($order->tipe_pesanan === 'take_away')
+                                    <span class="badge bg-info"><i class="bi bi-bag me-1"></i>Take Away (Bungkus)</span>
+                                @else
+                                    <span class="badge bg-primary"><i class="bi bi-shop me-1"></i>Dine In (Makan di Tempat)</span>
+                                @endif
+                            </p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Status Pesanan:</strong>
@@ -172,38 +180,53 @@
                         </div>
                         <form action="{{ route('customer.orders.pay', $order) }}" method="POST" id="paymentForm">
                             @csrf
-                            <div class="mb-3 text-start">
-                                <label class="form-label fw-bold">Metode Pembayaran</label>
-                                <select class="form-select" name="metode" id="paymentMethod" style="background-color: var(--card-bg); color: var(--text-color); border-color: var(--border-color);">
-                                    <option value="qris" selected>QRIS (Manual)</option>
-                                    <option value="cash">Bayar di Kasir (Cash / Tunai)</option>
-                                </select>
+                            <div class="mb-4 text-start">
+                                <label class="form-label fw-bold d-block mb-3">Pilih Metode Pembayaran</label>
+                                
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <input type="radio" class="btn-check" name="metode" id="pay_qris" value="qris" checked>
+                                        <label class="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center gap-2" for="pay_qris" style="border-width: 2px;">
+                                            <i class="bi bi-qr-code-scan fs-3"></i>
+                                            <span class="fw-bold">QRIS</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="radio" class="btn-check" name="metode" id="pay_cash" value="cash">
+                                        <label class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center gap-2" for="pay_cash" style="border-width: 2px;">
+                                            <i class="bi bi-cash-coin fs-3"></i>
+                                            <span class="fw-bold">Tunai (Kasir)</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div id="cashInstructions" class="alert alert-info text-start small d-none" style="border-left: 4px solid #0dcaf0; background: rgba(13, 202, 240, 0.1); color: #0dcaf0;">
                                 <i class="bi bi-info-circle-fill me-1"></i> Silakan informasikan Kode Pesanan <strong>{{ $order->kode_pesanan }}</strong> ke Kasir untuk membayar secara tunai.
                             </div>
                             
-                            <button type="submit" class="btn btn-success btn-lg w-100" id="btnPay">
-                                <i class="bi bi-qr-code-scan me-1"></i> Bayar Sekarang (QRIS)
+                            <button type="submit" class="btn btn-success btn-lg w-100 mt-2" id="btnPay">
+                                Lanjutkan Pembayaran <i class="bi bi-arrow-right ms-1"></i>
                             </button>
                         </form>
 
                         <script>
-                            document.getElementById('paymentMethod').addEventListener('change', function() {
-                                const val = this.value;
-                                const cashInstruct = document.getElementById('cashInstructions');
-                                const btnPay = document.getElementById('btnPay');
-                                
-                                if (val === 'cash') {
-                                    cashInstruct.classList.remove('d-none');
-                                    btnPay.innerHTML = '<i class="bi bi-cash-coin me-1"></i> Konfirmasi Pembayaran Cash';
-                                    btnPay.className = 'btn btn-primary btn-lg w-100';
-                                } else {
-                                    cashInstruct.classList.add('d-none');
-                                    btnPay.innerHTML = '<i class="bi bi-qr-code-scan me-1"></i> Bayar Sekarang (QRIS)';
-                                    btnPay.className = 'btn btn-success btn-lg w-100';
-                                }
+                            document.querySelectorAll('input[name="metode"]').forEach(radio => {
+                                radio.addEventListener('change', function() {
+                                    const val = this.value;
+                                    const cashInstruct = document.getElementById('cashInstructions');
+                                    const btnPay = document.getElementById('btnPay');
+                                    
+                                    if (val === 'cash') {
+                                        cashInstruct.classList.remove('d-none');
+                                        btnPay.innerHTML = '<i class="bi bi-cash-coin me-1"></i> Konfirmasi Pembayaran Tunai';
+                                        btnPay.className = 'btn btn-primary btn-lg w-100 mt-2';
+                                    } else {
+                                        cashInstruct.classList.add('d-none');
+                                        btnPay.innerHTML = 'Lanjutkan Pembayaran <i class="bi bi-arrow-right ms-1"></i>';
+                                        btnPay.className = 'btn btn-success btn-lg w-100 mt-2';
+                                    }
+                                });
                             });
                         </script>
                     @else

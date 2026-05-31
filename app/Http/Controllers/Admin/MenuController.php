@@ -45,7 +45,7 @@ class MenuController extends Controller
         $validated = $this->prepareMenuData($validated);
 
         if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $request->file('gambar')->store('menus', 'public');
+            $validated['gambar'] = \App\Services\SupabaseStorageService::upload($request->file('gambar'), 'menus');
         }
 
         $menu = Menu::create($validated);
@@ -94,9 +94,9 @@ class MenuController extends Controller
 
         if ($request->hasFile('gambar')) {
             if ($menu->gambar) {
-                Storage::disk('public')->delete($menu->gambar);
+                \App\Services\SupabaseStorageService::delete($menu->gambar);
             }
-            $validated['gambar'] = $request->file('gambar')->store('menus', 'public');
+            $validated['gambar'] = \App\Services\SupabaseStorageService::upload($request->file('gambar'), 'menus');
         }
 
         $menu->update($validated);
@@ -109,7 +109,7 @@ class MenuController extends Controller
     public function destroy(Menu $menu)
     {
         if ($menu->gambar) {
-            Storage::disk('public')->delete($menu->gambar);
+            \App\Services\SupabaseStorageService::delete($menu->gambar);
         }
 
         $menu->delete();

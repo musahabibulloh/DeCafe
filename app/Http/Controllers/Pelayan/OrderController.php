@@ -36,6 +36,8 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'nomor_meja' => 'required|string|max:50',
+            'atas_nama' => 'required|string|max:100',
+            'tipe_pesanan' => 'required|in:dine_in,take_away',
             'nama_pelanggan' => 'nullable|string|max:255',
             'catatan' => 'nullable|string',
             'items' => 'required|array|min:1',
@@ -54,6 +56,8 @@ class OrderController extends Controller
                     'kode_pesanan' => $this->generateOrderCode(),
                     'user_id' => $request->user()->id,
                     'nama_pelanggan' => $validated['nama_pelanggan'] ?? null,
+                    'atas_nama' => $validated['atas_nama'],
+                    'tipe_pesanan' => $validated['tipe_pesanan'],
                     'nomor_meja' => $validated['nomor_meja'],
                     'total_harga' => 0,
                     'status_pesanan' => 'menunggu',
@@ -69,18 +73,38 @@ class OrderController extends Controller
                         throw new \RuntimeException('Stok menu tidak mencukupi untuk ' . $menu->nama_menu . '.');
                     }
 
-                    $subtotal = $menu->harga * $item['jumlah'];
-                    $total += $subtotal;
+                    $catatan = $item['catatan_item'] ?? '';
+                    $catatanLines = $catatan ? explode(" \n ", $catatan) : [];
 
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'menu_id' => $menu->id,
-                        'nama_menu' => $menu->nama_menu,
-                        'harga' => $menu->harga,
-                        'jumlah' => $item['jumlah'],
-                        'subtotal' => $subtotal,
-                        'catatan_item' => $item['catatan_item'] ?? null,
-                    ]);
+                    if (!empty($catatanLines)) {
+                        foreach ($catatanLines as $line) {
+                            $portionPrice = Order::calculatePortionPrice($menu, $line);
+                            $total += $portionPrice;
+
+                            OrderItem::create([
+                                'order_id' => $order->id,
+                                'menu_id' => $menu->id,
+                                'nama_menu' => $menu->nama_menu,
+                                'harga' => $portionPrice,
+                                'jumlah' => 1,
+                                'subtotal' => $portionPrice,
+                                'catatan_item' => $line,
+                            ]);
+                        }
+                    } else {
+                        $subtotal = $menu->harga * $item['jumlah'];
+                        $total += $subtotal;
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $menu->id,
+                            'nama_menu' => $menu->nama_menu,
+                            'harga' => $menu->harga,
+                            'jumlah' => $item['jumlah'],
+                            'subtotal' => $subtotal,
+                            'catatan_item' => null,
+                        ]);
+                    }
 
                     $menu->decrement('stok', $item['jumlah']);
                 }
@@ -129,6 +153,8 @@ class OrderController extends Controller
 
         $validated = $request->validate([
             'nomor_meja' => 'required|string|max:50',
+            'atas_nama' => 'required|string|max:100',
+            'tipe_pesanan' => 'required|in:dine_in,take_away',
             'nama_pelanggan' => 'nullable|string|max:255',
             'catatan' => 'nullable|string',
             'items' => 'required|array|min:1',
@@ -157,24 +183,46 @@ class OrderController extends Controller
                         throw new \RuntimeException('Stok menu tidak mencukupi untuk ' . $menu->nama_menu . '.');
                     }
 
-                    $subtotal = $menu->harga * $item['jumlah'];
-                    $total += $subtotal;
+                    $catatan = $item['catatan_item'] ?? '';
+                    $catatanLines = $catatan ? explode(" \n ", $catatan) : [];
 
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'menu_id' => $menu->id,
-                        'nama_menu' => $menu->nama_menu,
-                        'harga' => $menu->harga,
-                        'jumlah' => $item['jumlah'],
-                        'subtotal' => $subtotal,
-                        'catatan_item' => $item['catatan_item'] ?? null,
-                    ]);
+                    if (!empty($catatanLines)) {
+                        foreach ($catatanLines as $line) {
+                            $portionPrice = Order::calculatePortionPrice($menu, $line);
+                            $total += $portionPrice;
+
+                            OrderItem::create([
+                                'order_id' => $order->id,
+                                'menu_id' => $menu->id,
+                                'nama_menu' => $menu->nama_menu,
+                                'harga' => $portionPrice,
+                                'jumlah' => 1,
+                                'subtotal' => $portionPrice,
+                                'catatan_item' => $line,
+                            ]);
+                        }
+                    } else {
+                        $subtotal = $menu->harga * $item['jumlah'];
+                        $total += $subtotal;
+
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'menu_id' => $menu->id,
+                            'nama_menu' => $menu->nama_menu,
+                            'harga' => $menu->harga,
+                            'jumlah' => $item['jumlah'],
+                            'subtotal' => $subtotal,
+                            'catatan_item' => null,
+                        ]);
+                    }
 
                     $menu->decrement('stok', $item['jumlah']);
                 }
 
                 $order->update([
                     'nama_pelanggan' => $validated['nama_pelanggan'] ?? null,
+                    'atas_nama' => $validated['atas_nama'],
+                    'tipe_pesanan' => $validated['tipe_pesanan'],
                     'nomor_meja' => $validated['nomor_meja'],
                     'catatan' => $validated['catatan'] ?? null,
                     'total_harga' => $total,

@@ -108,7 +108,7 @@
             </div>
             
             <h1 class="google-title">Login SSO</h1>
-            <p class="google-subtitle">Gunakan Akun Google Anda untuk masuk ke DeCafe</p>
+            <p class="google-subtitle">Gunakan Akun Google Anda untuk masuk ke Nasi Bakar Cak Win</p>
 
             <form method="POST" action="{{ route('sso.google.callback') }}">
                 @csrf

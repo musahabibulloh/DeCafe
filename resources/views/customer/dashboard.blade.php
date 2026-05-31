@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - DeCafe')
+@section('title', 'Dashboard - Nasi Bakar Cak Win')
 
 @section('content')
 <style>
@@ -107,10 +107,18 @@
         <div class="d-flex align-items-center justify-content-between">
             <div>
                 <h2 class="fw-bold mb-1">Halo, {{ auth()->user()->name }}! 👋</h2>
-                <p class="mb-0 opacity-90">Nikmati menu makanan dan minuman terbaik dari DeCafe. Pesan langsung dari meja Anda.</p>
+                @if($nomorMeja)
+                    <p class="mb-0 opacity-90"><i class="bi bi-geo-alt-fill me-1"></i> Anda di <strong>Meja {{ $nomorMeja }}</strong> — Silakan pilih menu dan pesan langsung!</p>
+                @else
+                    <p class="mb-0 opacity-90">Nikmati menu makanan dan minuman terbaik dari Nasi Bakar Cak Win. Pesan langsung dari meja Anda.</p>
+                @endif
             </div>
             <div class="d-none d-sm-block fs-1 px-3">
-                <i class="bi bi-cup-hot-fill"></i>
+                @if($nomorMeja)
+                    <span class="badge bg-white text-dark fs-4 px-3 py-2 rounded-3 shadow-sm" style="font-family: 'Outfit', sans-serif;">{{ $nomorMeja }}</span>
+                @else
+                    <i class="bi bi-cup-hot-fill"></i>
+                @endif
             </div>
         </div>
     </div>
@@ -129,7 +137,9 @@
 
     <form action="{{ route('customer.orders.store') }}" method="POST" id="orderForm" class="no-double-submit-prevent">
         @csrf
-        <input type="hidden" name="nomor_meja" id="hidden_nomor_meja">
+        <input type="hidden" name="nomor_meja" id="hidden_nomor_meja" value="{{ $nomorMeja ?? '' }}">
+        <input type="hidden" name="atas_nama" id="hidden_atas_nama" value="">
+        <input type="hidden" name="tipe_pesanan" id="hidden_tipe_pesanan" value="dine_in">
 
         <div class="row g-4">
             <!-- Left Side: Menus -->
@@ -144,8 +154,8 @@
                             @foreach($items as $menu)
                                 <div class="col-md-6 col-xl-4 menu-item-col" data-name="{{ strtolower($menu->nama_menu) }}" data-desc="{{ strtolower($menu->deskripsi ?? '') }}">
                                     <div class="card h-100 menu-card overflow-hidden">
-                                        @if($menu->gambar)
-                                            <img src="{{ asset('storage/' . $menu->gambar) }}" class="card-img-top" alt="{{ $menu->nama_menu }}" style="height: 160px; object-fit: cover;">
+                                        @if($menu->gambar_url)
+                                            <img src="{{ $menu->gambar_url }}" class="card-img-top" alt="{{ $menu->nama_menu }}" style="height: 160px; object-fit: cover;">
                                         @else
                                             <div class="d-flex align-items-center justify-content-center bg-secondary-subtle text-muted" style="height: 160px; background-color: rgba(255,255,255,0.02) !important;">
                                                 <i class="bi bi-cup-straw fs-1 opacity-50" style="color: var(--text-muted);"></i>
@@ -154,7 +164,7 @@
                                         <div class="card-body d-flex flex-column justify-content-between p-3">
                                             <div>
                                                 <h6 class="card-title fw-bold mb-1 text-truncate">{{ $menu->nama_menu }}</h6>
-                                                <p class="small text-muted mb-2 text-truncate" title="{{ $menu->deskripsi ?? 'Menu nikmat dari DeCafe' }}">
+                                                <p class="small text-muted mb-2 text-truncate" title="{{ $menu->deskripsi ?? 'Menu nikmat dari Nasi Bakar Cak Win' }}">
                                                     {{ $menu->deskripsi ?? 'Pilihan hidangan berkualitas tinggi' }}
                                                 </p>
                                             </div>
@@ -286,10 +296,37 @@
                 <div id="modalOrderItems" class="list-group list-group-flush mb-4" style="max-height: 200px; overflow-y: auto;">
                     <!-- Filled dynamically -->
                 </div>
+
+                <div class="mb-3">
+                    <label for="modal_atas_nama" class="form-label fw-bold text-white">Atas Nama <span class="text-danger">*</span></label>
+                    <input type="text" id="modal_atas_nama" class="form-control" placeholder="Masukkan nama pemesan" required>
+                    <div class="invalid-feedback" id="modalAtasNamaError" style="display: none;">Atas nama wajib diisi.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-white">Tipe Pesanan <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="modal_tipe_pesanan" id="modal_tipe_dine_in" value="dine_in" checked>
+                            <label class="form-check-label" for="modal_tipe_dine_in">
+                                <i class="bi bi-shop me-1"></i> Dine In <small class="text-muted">(Makan di Tempat)</small>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="modal_tipe_pesanan" id="modal_tipe_take_away" value="take_away">
+                            <label class="form-check-label" for="modal_tipe_take_away">
+                                <i class="bi bi-bag me-1"></i> Take Away <small class="text-muted">(Bungkus)</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="mb-3">
-                    <label for="modal_nomor_meja" class="form-label fw-bold">Nomor Meja Anda <span class="text-danger">*</span></label>
-                    <input type="text" id="modal_nomor_meja" class="form-control" placeholder="Contoh: 05" required>
+                    <label for="modal_nomor_meja" class="form-label fw-bold text-white">Nomor Meja Anda <span class="text-danger">*</span></label>
+                    <input type="text" id="modal_nomor_meja" class="form-control" placeholder="Contoh: 05" value="{{ $nomorMeja ?? '' }}" {{ $nomorMeja ? 'readonly' : '' }} required>
+                    @if($nomorMeja)
+                        <small class="text-success mt-1 d-block"><i class="bi bi-qr-code-scan me-1"></i> Nomor meja otomatis dari QR Code</small>
+                    @endif
                     <div class="invalid-feedback" id="modalMejaError" style="display: none;">Nomor meja wajib diisi.</div>
                 </div>
 
@@ -353,6 +390,65 @@
 @push('scripts')
 <script>
     const menuItems = @json($menus->flatten()->keyBy('id'));
+    const dbLauks = @json($lauks);
+    
+    function calculatePortionPriceJS(menuName, price, customizationLine) {
+        let basePrice = parseInt(price) || 0;
+        const menuNameLower = menuName.toLowerCase();
+        const isNasiBakar = menuNameLower.includes('nasi bakar') || menuNameLower.includes('nasbak');
+        
+        if (isNasiBakar) {
+            if (menuNameLower.includes('reguler') || menuNameLower.includes('regular')) {
+                // Default base price for reguler is 10.000
+                basePrice = 10000;
+                
+                const laukMatch = customizationLine.match(/Lauk:\s*([^|\]]+)/i);
+                if (laukMatch) {
+                    const laukPart = laukMatch[1].toLowerCase().trim();
+                    const laukUtama = dbLauks.filter(l => l.tipe === 'utama');
+                    
+                    for (const l of laukUtama) {
+                        const cleanDbName = l.nama_lauk.toLowerCase().replace(/\*/g, '').trim();
+                        const subNames = cleanDbName.split('/');
+                        let matched = false;
+                        for (let subName of subNames) {
+                            subName = subName.trim();
+                            if (subName !== '' && laukPart.includes(subName)) {
+                                basePrice = parseInt(l.harga) || 10000;
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (matched) break;
+                    }
+                }
+            } else if (menuNameLower.includes('mix')) {
+                basePrice = 12000;
+            } else if (menuNameLower.includes('jumbo')) {
+                basePrice = 15000;
+            }
+            
+            const ekstraMatch = customizationLine.match(/Ekstra:\s*([^|\]]+)/i);
+            if (ekstraMatch) {
+                const ekstraPart = ekstraMatch[1].toLowerCase().trim();
+                const ekstraLauks = dbLauks.filter(l => l.tipe === 'tambahan');
+                
+                for (const e of ekstraLauks) {
+                    const cleanDbName = e.nama_lauk.toLowerCase().replace(/\*/g, '').trim();
+                    const subNames = cleanDbName.split('/');
+                    for (let subName of subNames) {
+                        subName = subName.trim();
+                        if (subName !== '' && ekstraPart.includes(subName)) {
+                            basePrice += parseInt(e.harga) || 0;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return basePrice;
+    }
+
     let menuCustomizations = {};
     let activeCustomiseMenuId = null;
     let activeCustomiseMaxStok = 0;
@@ -578,28 +674,35 @@
 
                 if (qty > 0 && menu) {
                     hasItems = true;
-                    const subtotal = qty * menu.harga;
-                    total += subtotal;
-                    totalQty += qty;
-
+                    let itemTotal = 0;
                     let catatanHtml = '';
                     if (catatan) {
                         const lines = catatan.split(' \n ');
                         catatanHtml = '<div class="mt-1 small text-muted font-monospace" style="font-size: 0.72rem; line-height: 1.3;">';
                         lines.forEach(line => {
-                            catatanHtml += `<div class="text-truncate" title="${line}"><i class="bi bi-gear-wide-connected me-1"></i> ${line}</div>`;
+                            const linePrice = calculatePortionPriceJS(menu.nama_menu, menu.harga, line);
+                            itemTotal += linePrice;
+                            catatanHtml += `<div class="text-truncate text-wrap mb-1" title="${line}"><i class="bi bi-gear-wide-connected me-1 text-primary"></i> ${line} <span class="text-success fw-bold">(Rp ${linePrice.toLocaleString('id-ID')})</span></div>`;
                         });
                         catatanHtml += '</div>';
+                        
+                        if (qty > lines.length) {
+                            itemTotal += (qty - lines.length) * menu.harga;
+                        }
+                    } else {
+                        itemTotal = qty * menu.harga;
                     }
+                    total += itemTotal;
+                    totalQty += qty;
 
                     htmlContent += `<div class="list-group-item px-3 py-2 bg-transparent border-0 border-bottom">
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <div style="flex-grow: 1; min-width: 0;">
                                 <span class="fw-semibold text-truncate d-block" style="max-width: 180px; color: var(--bs-body-color);">${menu.nama_menu}</span>
-                                <small class="text-muted">Rp ${menu.harga.toLocaleString('id-ID')} x ${qty}</small>
+                                <small class="text-muted">Jumlah: ${qty}</small>
                                 ${catatanHtml}
                             </div>
-                            <span class="fw-bold text-primary ms-2">Rp ${subtotal.toLocaleString('id-ID')}</span>
+                            <span class="fw-bold text-primary ms-2">Rp ${itemTotal.toLocaleString('id-ID')}</span>
                         </div>
                     </div>`;
                 }
@@ -660,26 +763,33 @@
 
                 if (qty > 0 && menu) {
                     hasItems = true;
-                    const subtotal = qty * menu.harga;
-                    total += subtotal;
-
+                    let itemTotal = 0;
                     let catatanHtml = '';
                     if (catatan) {
                         const lines = catatan.split(' \n ');
                         catatanHtml = '<div class="mt-1 small text-muted font-monospace" style="font-size: 0.72rem; line-height: 1.3;">';
                         lines.forEach(line => {
-                            catatanHtml += `<div class="text-truncate" title="${line}"><i class="bi bi-gear-wide-connected me-1"></i> ${line}</div>`;
+                            const linePrice = calculatePortionPriceJS(menu.nama_menu, menu.harga, line);
+                            itemTotal += linePrice;
+                            catatanHtml += `<div class="text-truncate text-wrap mb-1" title="${line}"><i class="bi bi-gear-wide-connected me-1 text-primary"></i> ${line} <span class="text-success fw-bold">(Rp ${linePrice.toLocaleString('id-ID')})</span></div>`;
                         });
                         catatanHtml += '</div>';
+                        
+                        if (qty > lines.length) {
+                            itemTotal += (qty - lines.length) * menu.harga;
+                        }
+                    } else {
+                        itemTotal = qty * menu.harga;
                     }
+                    total += itemTotal;
 
                     htmlContent += `<div class="list-group-item px-0 py-2 bg-transparent border-0 border-bottom d-flex justify-content-between align-items-start">
                         <div style="flex-grow: 1; min-width: 0;">
-                            <span class="fw-semibold d-block text-truncate">${menu.nama_menu}</span>
+                            <span class="fw-semibold d-block text-truncate text-white">${menu.nama_menu}</span>
                             <small class="text-muted d-block">${qty}x @ Rp ${menu.harga.toLocaleString('id-ID')}</small>
                             ${catatanHtml}
                         </div>
-                        <strong class="text-primary ms-2">Rp ${subtotal.toLocaleString('id-ID')}</strong>
+                        <strong class="text-primary ms-2">Rp ${itemTotal.toLocaleString('id-ID')}</strong>
                     </div>`;
                 }
             }
@@ -694,6 +804,8 @@
         document.getElementById('modalTotalHarga').textContent = 'Rp ' + total.toLocaleString('id-ID');
         
         // Clear errors
+        document.getElementById('modal_atas_nama').classList.remove('is-invalid');
+        document.getElementById('modalAtasNamaError').style.display = 'none';
         document.getElementById('modal_nomor_meja').classList.remove('is-invalid');
         document.getElementById('modalMejaError').style.display = 'none';
 
@@ -701,6 +813,17 @@
     });
 
     document.getElementById('btnConfirmOrderSubmit').addEventListener('click', function() {
+        // Validate atas nama
+        const atasNamaVal = document.getElementById('modal_atas_nama').value.trim();
+        if (!atasNamaVal) {
+            document.getElementById('modal_atas_nama').classList.add('is-invalid');
+            document.getElementById('modalAtasNamaError').style.display = 'block';
+            return;
+        }
+        document.getElementById('modal_atas_nama').classList.remove('is-invalid');
+        document.getElementById('modalAtasNamaError').style.display = 'none';
+
+        // Validate meja
         const mejaVal = document.getElementById('modal_nomor_meja').value.trim();
         if (!mejaVal) {
             document.getElementById('modal_nomor_meja').classList.add('is-invalid');
@@ -708,8 +831,13 @@
             return;
         }
 
-        // Set hidden input value
+        // Get tipe pesanan
+        const tipePesanan = document.querySelector('input[name="modal_tipe_pesanan"]:checked').value;
+
+        // Set hidden input values
         document.getElementById('hidden_nomor_meja').value = mejaVal;
+        document.getElementById('hidden_atas_nama').value = atasNamaVal;
+        document.getElementById('hidden_tipe_pesanan').value = tipePesanan;
 
         // Submit form
         isOrderConfirmed = true;
