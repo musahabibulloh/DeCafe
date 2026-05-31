@@ -167,8 +167,8 @@
                         @if($order->bukti_pembayaran)
                             <div class="mt-3 text-start">
                                 <label class="form-label fw-bold small text-muted">Bukti Pembayaran Anda:</label>
-                                <a href="{{ asset($order->bukti_pembayaran) }}" target="_blank" class="d-block border rounded p-2 text-center bg-dark text-decoration-none">
-                                    <img src="{{ asset($order->bukti_pembayaran) }}" class="img-fluid rounded" style="max-height: 120px;" alt="Bukti Pembayaran">
+                                <a href="{{ $order->bukti_pembayaran_url }}" target="_blank" class="d-block border rounded p-2 text-center bg-dark text-decoration-none">
+                                    <img src="{{ $order->bukti_pembayaran_url }}" class="img-fluid rounded" style="max-height: 120px;" alt="Bukti Pembayaran">
                                     <span class="d-block small text-muted mt-1"><i class="bi bi-eye"></i> Lihat Ukuran Penuh</span>
                                 </a>
                             </div>

@@ -81,4 +81,17 @@ class Order extends Model
         
         return $basePrice;
     }
+
+    public function getBuktiPembayaranUrlAttribute()
+    {
+        if (empty($this->bukti_pembayaran)) {
+            return null;
+        }
+
+        if (\Illuminate\Support\Str::startsWith($this->bukti_pembayaran, ['http://', 'https://'])) {
+            return $this->bukti_pembayaran;
+        }
+
+        return asset($this->bukti_pembayaran);
+    }
 }

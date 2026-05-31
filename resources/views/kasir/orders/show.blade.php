@@ -29,8 +29,8 @@
                 <div class="mt-4 pt-3 border-top">
                     <h6 class="fw-bold mb-2"><i class="bi bi-receipt"></i> Bukti Pembayaran QRIS:</h6>
                     <div style="max-width: 300px;">
-                        <a href="{{ asset($order->bukti_pembayaran) }}" target="_blank" class="d-block border rounded p-2 text-center bg-light text-decoration-none">
-                            <img src="{{ asset($order->bukti_pembayaran) }}" class="img-fluid rounded" style="max-height: 200px;" alt="Bukti Pembayaran">
+                        <a href="{{ $order->bukti_pembayaran_url }}" target="_blank" class="d-block border rounded p-2 text-center bg-light text-decoration-none">
+                            <img src="{{ $order->bukti_pembayaran_url }}" class="img-fluid rounded" style="max-height: 200px;" alt="Bukti Pembayaran">
                             <span class="d-block small text-muted mt-2"><i class="bi bi-zoom-in"></i> Klik untuk memperbesar</span>
                         </a>
                     </div>

@@ -228,19 +228,12 @@ class CustomerController extends Controller
 
         if ($request->hasFile('bukti_pembayaran')) {
             $file = $request->file('bukti_pembayaran');
-            $filename = 'bukti_' . $order->kode_pesanan . '_' . time() . '.' . $file->getClientOriginalExtension();
             
-            // Ensure directory exists
-            $destinationPath = public_path('uploads/bukti_pembayaran');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            
-            $file->move($destinationPath, $filename);
+            $path = \App\Services\SupabaseStorageService::upload($file, 'bukti_pembayaran');
 
             // Update order
             $order->update([
-                'bukti_pembayaran' => 'uploads/bukti_pembayaran/' . $filename,
+                'bukti_pembayaran' => $path,
                 'status_pembayaran' => 'menunggu_konfirmasi',
             ]);
 
