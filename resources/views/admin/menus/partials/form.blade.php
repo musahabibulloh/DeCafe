@@ -85,9 +85,53 @@
     </button>
 </div>
 
+<style>
+    @media (max-width: 767.98px) {
+        .responsive-options-table {
+            border: none !important;
+            overflow-x: visible !important;
+        }
+        .responsive-options-table table {
+            display: block !important;
+            width: 100% !important;
+        }
+        .responsive-options-table thead {
+            display: none !important;
+        }
+        .responsive-options-table tbody {
+            display: block !important;
+            width: 100% !important;
+        }
+        .responsive-options-table tbody tr {
+            display: block !important;
+            width: 100% !important;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+            border-radius: 12px !important;
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+            background-color: var(--bg-card, rgba(255, 255, 255, 0.02)) !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        }
+        .responsive-options-table tbody tr td {
+            display: block !important;
+            width: 100% !important;
+            padding: 0.35rem 0 !important;
+            border: none !important;
+            text-align: left !important;
+        }
+        .responsive-options-table tbody tr td.action-td {
+            border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+            margin-top: 0.5rem !important;
+            padding-top: 0.75rem !important;
+            display: flex !important;
+            justify-content: flex-end !important;
+        }
+    }
+</style>
+
 <div class="row g-3">
     <div class="col-12">
-        <div class="table-responsive">
+        <div class="table-responsive responsive-options-table">
             <table class="table align-middle mb-2">
                 <thead>
                     <tr>
@@ -102,9 +146,11 @@
                     @forelse($optionRows as $index => $option)
                         <tr>
                             <td>
+                                <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Nama Opsi</label>
                                 <input type="text" name="options[{{ $index }}][nama_opsi]" class="form-control" value="{{ $option['nama_opsi'] ?? '' }}" placeholder="Contoh: Ayam suwir">
                             </td>
                             <td>
+                                <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Jenis</label>
                                 <select name="options[{{ $index }}][tipe]" class="form-select">
                                     <option value="lauk" @selected(($option['tipe'] ?? 'lauk') === 'lauk')>Lauk</option>
                                     <option value="sambal" @selected(($option['tipe'] ?? '') === 'sambal')>Sambal</option>
@@ -112,12 +158,14 @@
                                 </select>
                             </td>
                             <td>
+                                <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Status</label>
                                 <select name="options[{{ $index }}][status]" class="form-select">
                                     <option value="tersedia" @selected(($option['status'] ?? 'tersedia') === 'tersedia')>Tersedia</option>
                                     <option value="habis" @selected(($option['status'] ?? '') === 'habis')>Habis</option>
                                 </select>
                             </td>
                             <td>
+                                <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Gambar</label>
                                 <div class="d-flex align-items-center gap-2">
                                     @php
                                         $gambarPath = null;
@@ -139,9 +187,9 @@
                                     <input type="file" name="options[{{ $index }}][gambar]" class="form-control form-control-sm" accept="image/*">
                                 </div>
                             </td>
-                            <td class="text-end">
-                                <button type="button" class="btn btn-outline-danger btn-sm remove-option-row" aria-label="Hapus opsi">
-                                    <i class="bi bi-trash"></i>
+                            <td class="text-end action-td">
+                                <button type="button" class="btn btn-outline-danger btn-sm w-100 w-md-auto remove-option-row" aria-label="Hapus opsi">
+                                    <i class="bi bi-trash"></i><span class="d-md-none ms-1">Hapus Opsi</span>
                                 </button>
                             </td>
                         </tr>
@@ -197,9 +245,11 @@
             row.setAttribute('data-option-row', 'true');
             row.innerHTML = `
                 <td>
+                    <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Nama Opsi</label>
                     <input type="text" name="options[\${index}][nama_opsi]" class="form-control" value="\${option.nama_opsi ?? ''}" placeholder="Contoh: Ayam suwir">
                 </td>
                 <td>
+                    <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Jenis</label>
                     <select name="options[\${index}][tipe]" class="form-select">
                         <option value="lauk">Lauk</option>
                         <option value="sambal">Sambal</option>
@@ -207,20 +257,22 @@
                     </select>
                 </td>
                 <td>
+                    <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Status</label>
                     <select name="options[\${index}][status]" class="form-select">
                         <option value="tersedia">Tersedia</option>
                         <option value="habis">Habis</option>
                     </select>
                 </td>
                 <td>
+                    <label class="form-label d-md-none fw-semibold mb-1 small text-muted">Gambar</label>
                     <div class="d-flex align-items-center gap-2">
                         <input type="hidden" name="options[\${index}][existing_gambar]" value="">
                         <input type="file" name="options[\${index}][gambar]" class="form-control form-control-sm" accept="image/*">
                     </div>
                 </td>
-                <td class="text-end">
-                    <button type="button" class="btn btn-outline-danger btn-sm remove-option-row" aria-label="Hapus opsi">
-                        <i class="bi bi-trash"></i>
+                <td class="text-end action-td">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100 w-md-auto remove-option-row" aria-label="Hapus opsi">
+                        <i class="bi bi-trash"></i><span class="d-md-none ms-1">Hapus Opsi</span>
                     </button>
                 </td>
             `;
