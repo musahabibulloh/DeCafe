@@ -69,6 +69,7 @@
                 'nama_opsi' => $option->nama_opsi,
                 'tipe' => $option->tipe,
                 'status' => $option->status,
+                'gambar' => $option->gambar,
             ])->values()->all()
             : [];
     }
@@ -93,6 +94,7 @@
                         <th>Nama Opsi</th>
                         <th style="width: 180px;">Jenis</th>
                         <th style="width: 160px;">Status</th>
+                        <th style="width: 250px;">Gambar</th>
                         <th style="width: 70px;"></th>
                     </tr>
                 </thead>
@@ -115,6 +117,28 @@
                                     <option value="habis" @selected(($option['status'] ?? '') === 'habis')>Habis</option>
                                 </select>
                             </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    @php
+                                        $gambarPath = null;
+                                        if (is_array($option)) {
+                                            $gambarPath = $option['gambar'] ?? null;
+                                        } elseif ($option instanceof \App\Models\MenuOption) {
+                                            $gambarPath = $option->gambar;
+                                        }
+                                        
+                                        $gambarUrl = null;
+                                        if ($gambarPath) {
+                                            $gambarUrl = \Illuminate\Support\Str::startsWith($gambarPath, ['http://', 'https://']) ? $gambarPath : asset('storage/' . $gambarPath);
+                                        }
+                                    @endphp
+                                    @if($gambarUrl)
+                                        <img src="{{ $gambarUrl }}" alt="Option Image" class="rounded border" style="width: 38px; height: 38px; object-fit: cover;">
+                                    @endif
+                                    <input type="hidden" name="options[{{ $index }}][existing_gambar]" value="{{ $gambarPath }}">
+                                    <input type="file" name="options[{{ $index }}][gambar]" class="form-control form-control-sm" accept="image/*">
+                                </div>
+                            </td>
                             <td class="text-end">
                                 <button type="button" class="btn btn-outline-danger btn-sm remove-option-row" aria-label="Hapus opsi">
                                     <i class="bi bi-trash"></i>
@@ -123,7 +147,7 @@
                         </tr>
                     @empty
                         <tr class="empty-options-row">
-                            <td colspan="4" class="text-center text-muted py-3">Belum ada opsi tambahan.</td>
+                            <td colspan="5" class="text-center text-muted py-3">Belum ada opsi tambahan.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -173,20 +197,26 @@
             row.setAttribute('data-option-row', 'true');
             row.innerHTML = `
                 <td>
-                    <input type="text" name="options[${index}][nama_opsi]" class="form-control" value="${option.nama_opsi ?? ''}" placeholder="Contoh: Ayam suwir">
+                    <input type="text" name="options[\${index}][nama_opsi]" class="form-control" value="\${option.nama_opsi ?? ''}" placeholder="Contoh: Ayam suwir">
                 </td>
                 <td>
-                    <select name="options[${index}][tipe]" class="form-select">
+                    <select name="options[\${index}][tipe]" class="form-select">
                         <option value="lauk">Lauk</option>
                         <option value="sambal">Sambal</option>
                         <option value="ekstra_lauk">Ekstra Lauk</option>
                     </select>
                 </td>
                 <td>
-                    <select name="options[${index}][status]" class="form-select">
+                    <select name="options[\${index}][status]" class="form-select">
                         <option value="tersedia">Tersedia</option>
                         <option value="habis">Habis</option>
                     </select>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="hidden" name="options[\${index}][existing_gambar]" value="">
+                        <input type="file" name="options[\${index}][gambar]" class="form-control form-control-sm" accept="image/*">
+                    </div>
                 </td>
                 <td class="text-end">
                     <button type="button" class="btn btn-outline-danger btn-sm remove-option-row" aria-label="Hapus opsi">
@@ -210,7 +240,7 @@
 
             button.closest('tr').remove();
             if (!optionRows.querySelector('tr')) {
-                optionRows.innerHTML = '<tr class="empty-options-row"><td colspan="4" class="text-center text-muted py-3">Belum ada opsi tambahan.</td></tr>';
+                optionRows.innerHTML = '<tr class="empty-options-row"><td colspan="5" class="text-center text-muted py-3">Belum ada opsi tambahan.</td></tr>';
             }
         });
     });

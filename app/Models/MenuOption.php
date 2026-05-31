@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
     'nama_opsi',
     'tipe',
     'status',
+    'gambar',
     'sort_order',
 ])]
 class MenuOption extends Model
@@ -24,5 +25,18 @@ class MenuOption extends Model
     public function menu()
     {
         return $this->belongsTo(Menu::class);
+    }
+
+    public function getGambarUrlAttribute()
+    {
+        if (empty($this->gambar)) {
+            return null;
+        }
+
+        if (\Illuminate\Support\Str::startsWith($this->gambar, ['http://', 'https://'])) {
+            return $this->gambar;
+        }
+
+        return asset('storage/' . $this->gambar);
     }
 }

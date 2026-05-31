@@ -38,6 +38,8 @@ class MenuController extends Controller
             'options.*.nama_opsi' => 'nullable|string|max:255',
             'options.*.tipe' => 'nullable|in:lauk,sambal,ekstra_lauk',
             'options.*.status' => 'nullable|in:tersedia,habis',
+            'options.*.gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'options.*.existing_gambar' => 'nullable|string',
         ]);
 
         $options = $validated['options'] ?? [];
@@ -86,6 +88,8 @@ class MenuController extends Controller
             'options.*.nama_opsi' => 'nullable|string|max:255',
             'options.*.tipe' => 'nullable|in:lauk,sambal,ekstra_lauk',
             'options.*.status' => 'nullable|in:tersedia,habis',
+            'options.*.gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'options.*.existing_gambar' => 'nullable|string',
         ]);
 
         $options = $validated['options'] ?? [];
@@ -131,18 +135,29 @@ class MenuController extends Controller
         $menu->options()->delete();
 
         collect($options)
-            ->map(fn ($option) => [
-                'nama_opsi' => trim($option['nama_opsi'] ?? ''),
-                'tipe' => $option['tipe'] ?? 'lauk',
-                'status' => $option['status'] ?? 'tersedia',
-            ])
-            ->filter(fn ($option) => $option['nama_opsi'] !== '')
+            ->filter(fn ($option) => trim($option['nama_opsi'] ?? '') !== '')
+            ->map(function ($option, $originalIndex) {
+                $gambarPath = $option['existing_gambar'] ?? null;
+                if (request()->hasFile("options.{$originalIndex}.gambar")) {
+                    $gambarPath = \App\Services\SupabaseStorageService::upload(
+                        request()->file("options.{$originalIndex}.gambar"),
+                        'menu_options'
+                    );
+                }
+                return [
+                    'nama_opsi' => trim($option['nama_opsi']),
+                    'tipe' => $option['tipe'] ?? 'lauk',
+                    'status' => $option['status'] ?? 'tersedia',
+                    'gambar' => $gambarPath,
+                ];
+            })
             ->values()
             ->each(function ($option, $index) use ($menu) {
                 $menu->options()->create([
                     'nama_opsi' => $option['nama_opsi'],
                     'tipe' => $option['tipe'],
                     'status' => $option['status'],
+                    'gambar' => $option['gambar'],
                     'sort_order' => $index,
                 ]);
             });

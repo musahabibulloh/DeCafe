@@ -478,7 +478,7 @@
             : [];
     }
 
-    function renderOptionButtons(containerId, name, options, type, icon = '') {
+    function renderOptionButtons(containerId, name, options, type, category) {
         const container = document.getElementById(containerId);
         container.innerHTML = options.map((option, index) => {
             const id = `${name}_${index}`;
@@ -487,11 +487,32 @@
             const checked = type === 'radio' && index === firstAvailableIndex ? 'checked' : '';
             const disabled = isAvailable ? '' : 'disabled';
             const statusLabel = isAvailable ? '' : '<span class="badge bg-danger ms-2">Habis</span>';
+            
+            let mediaHtml = '';
+            if (option.gambar) {
+                const url = option.gambar.startsWith('http://') || option.gambar.startsWith('https://') 
+                    ? option.gambar 
+                    : '/storage/' + option.gambar;
+                mediaHtml = `<img src="${url}" alt="${escapeHtml(option.nama_opsi)}" class="rounded" style="width: 32px; height: 32px; object-fit: cover; border: 1px solid var(--border-color);">`;
+            } else {
+                let iconClass = 'bi-egg';
+                if (category === 'sambal') iconClass = 'bi-fire';
+                if (category === 'ekstra_lauk') iconClass = 'bi-plus';
+                
+                mediaHtml = `
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; min-width: 32px;">
+                        <i class="bi ${iconClass} text-white" style="font-size: 0.95rem;"></i>
+                    </div>
+                `;
+            }
+
             return `
                 <div class="col-sm-6 col-md-4">
                     <input type="${type}" class="btn-check" name="${name}" id="${id}" value="${escapeHtml(option.nama_opsi)}" ${checked} ${disabled}>
-                    <label class="btn customise-option-btn w-100 text-start py-2 px-3 text-truncate" for="${id}">
-                        ${icon} ${escapeHtml(option.nama_opsi)} ${statusLabel}
+                    <label class="btn customise-option-btn w-100 d-flex align-items-center gap-2 py-2 px-3 text-start text-truncate" for="${id}">
+                        ${mediaHtml}
+                        <span class="text-truncate">${escapeHtml(option.nama_opsi)}</span>
+                        ${statusLabel}
                     </label>
                 </div>
             `;
@@ -515,9 +536,9 @@
         document.getElementById('sambalOptionsGroup').style.display = hasItems(sambalOptions) ? '' : 'none';
         document.getElementById('ekstraOptionsGroup').style.display = hasItems(ekstraOptions) ? '' : 'none';
 
-        renderOptionButtons('laukOptions', 'jenis_lauk', laukOptions, 'checkbox');
-        renderOptionButtons('sambalOptions', 'jenis_sambal', sambalOptions, 'radio');
-        renderOptionButtons('ekstraOptions', 'ekstra_lauk', ekstraOptions, 'checkbox', '<i class="bi bi-plus-lg me-1 small"></i>');
+        renderOptionButtons('laukOptions', 'jenis_lauk', laukOptions, 'checkbox', 'lauk');
+        renderOptionButtons('sambalOptions', 'jenis_sambal', sambalOptions, 'radio', 'sambal');
+        renderOptionButtons('ekstraOptions', 'ekstra_lauk', ekstraOptions, 'checkbox', 'ekstra_lauk');
     }
 
     function decrementQty(menuId) {
