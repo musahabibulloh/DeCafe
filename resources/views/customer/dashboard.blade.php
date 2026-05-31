@@ -390,7 +390,6 @@
 @push('scripts')
 <script>
     const menuItems = @json($menus->flatten()->keyBy('id'));
-    const dbLauks = @json($lauks);
     
     function calculatePortionPriceJS(menuName, price, customizationLine) {
         let basePrice = parseInt(price) || 0;
@@ -405,21 +404,8 @@
                 const laukMatch = customizationLine.match(/Lauk:\s*([^|\]]+)/i);
                 if (laukMatch) {
                     const laukPart = laukMatch[1].toLowerCase().trim();
-                    const laukUtama = dbLauks.filter(l => l.tipe === 'utama');
-                    
-                    for (const l of laukUtama) {
-                        const cleanDbName = l.nama_lauk.toLowerCase().replace(/\*/g, '').trim();
-                        const subNames = cleanDbName.split('/');
-                        let matched = false;
-                        for (let subName of subNames) {
-                            subName = subName.trim();
-                            if (subName !== '' && laukPart.includes(subName)) {
-                                basePrice = parseInt(l.harga) || 10000;
-                                matched = true;
-                                break;
-                            }
-                        }
-                        if (matched) break;
+                    if (laukPart.includes('*')) {
+                        basePrice = 12000;
                     }
                 }
             } else if (menuNameLower.includes('mix')) {
@@ -430,19 +416,14 @@
             
             const ekstraMatch = customizationLine.match(/Ekstra:\s*([^|\]]+)/i);
             if (ekstraMatch) {
-                const ekstraPart = ekstraMatch[1].toLowerCase().trim();
-                const ekstraLauks = dbLauks.filter(l => l.tipe === 'tambahan');
-                
-                for (const e of ekstraLauks) {
-                    const cleanDbName = e.nama_lauk.toLowerCase().replace(/\*/g, '').trim();
-                    const subNames = cleanDbName.split('/');
-                    for (let subName of subNames) {
-                        subName = subName.trim();
-                        if (subName !== '' && ekstraPart.includes(subName)) {
-                            basePrice += parseInt(e.harga) || 0;
-                            break;
+                const ekstraPart = ekstraMatch[1].trim();
+                if (ekstraPart.toLowerCase() !== 'tidak ada') {
+                    const extras = ekstraPart.split(',');
+                    extras.forEach(extra => {
+                        if (extra.trim() !== '') {
+                            basePrice += 3000;
                         }
-                    }
+                    });
                 }
             }
         }

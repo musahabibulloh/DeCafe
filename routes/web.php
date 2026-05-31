@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\MejaController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\LaukController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Kasir\CashierOrderController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
@@ -34,7 +33,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('/menus', MenuController::class);
     Route::resource('/users', UserController::class);
-    Route::resource('/lauks', LaukController::class);
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
     // Meja (Table) Management

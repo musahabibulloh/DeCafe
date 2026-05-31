@@ -26,10 +26,7 @@ class CustomerController extends Controller
         // Get table number from QR scan session
         $nomorMeja = session('nomor_meja');
 
-        // Fetch all lauk options from database
-        $lauks = \App\Models\Lauk::all();
-
-        return view('customer.dashboard', compact('menus', 'nomorMeja', 'lauks'));
+        return view('customer.dashboard', compact('menus', 'nomorMeja'));
     }
 
     public function menus()

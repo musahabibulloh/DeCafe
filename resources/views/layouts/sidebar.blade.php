@@ -26,11 +26,7 @@
                                 <i class="bi bi-cup-hot-fill"></i> Kelola Menu
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.lauks.*') ? 'active' : '' }}" href="{{ route('admin.lauks.index') }}">
-                                <i class="bi bi-gear-fill"></i> Kelola Lauk & Ekstra
-                            </a>
-                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
                                 <i class="bi bi-people-fill"></i> Kelola User
